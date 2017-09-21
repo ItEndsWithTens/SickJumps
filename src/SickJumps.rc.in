@@ -1,0 +1,30 @@
+#include <windows.h>
+
+1 VERSIONINFO
+    FILEVERSION     ${SICKJUMPS_MAJOR},${SICKJUMPS_MINOR},${SICKJUMPS_PATCH},0
+    PRODUCTVERSION  ${SICKJUMPS_MAJOR},${SICKJUMPS_MINOR},${SICKJUMPS_PATCH},0
+    FILEFLAGSMASK   0x00000000
+    FILEFLAGS       0x00000000
+    FILEOS          VOS__WINDOWS32
+    FILETYPE        VFT_DLL
+    FILESUBTYPE     VFT2_UNKNOWN
+{
+    BLOCK "StringFileInfo"
+    {
+        BLOCK "0409fde9"
+        {
+            VALUE "CompanyName", "${SICKJUMPS_AUTHOR} ${SICKJUMPS_AUTHOR_EMAIL}"
+            VALUE "FileDescription", "${SICKJUMPS_DESCRIPTION}"
+            VALUE "FileVersion", "${SICKJUMPS_VERSION}.0"
+            VALUE "InternalName", "${PROJECT_NAME}"
+            VALUE "LegalCopyright", "2017 ${SICKJUMPS_AUTHOR}"
+            VALUE "OriginalFilename", "${PROJECT_NAME}.dll"
+            VALUE "ProductName", "${PROJECT_NAME}"
+            VALUE "ProductVersion", "${SICKJUMPS_VERSION}.0"
+        }
+    }
+    BLOCK "VarFileInfo"
+    {
+        VALUE "Translation", 0x0409, 0xFDE9
+    }
+}
