@@ -289,6 +289,11 @@ int SickJumps::CalculateRampInputFrames(int _firstInputFrame, int _totalOutputFr
 		int breakvar = 4;
 	}
 
-	// Don't forget to include the first frame!
-	return inFrames + 1;
+	if (inFrames > 0)
+	{
+		// Don't forget to include the first frame!
+		inFrames++;
+	}
+	
+	return inFrames;
 }
