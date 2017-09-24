@@ -265,7 +265,8 @@ double ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, 
 	}
 	else
 	{
-		scaled = static_cast<double>(std::round((rangeOut * (value - inMin)) / rangeIn)) + outMin;
+		double distance = static_cast<double>(value - inMin);
+		scaled = ((rangeOut * distance) / static_cast<double>(rangeIn)) + outMin;
 	}
 
 	return scaled;
