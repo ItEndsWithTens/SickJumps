@@ -74,6 +74,8 @@ SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _star
 
 	rampDownFirstInputSample = (vi.AudioSamplesFromFrames(rampDownFirstInputFrame) - hz) + 1;
 	rampDownLastInputSample = vi.AudioSamplesFromFrames(rampDownLastInputFrame);
+
+	vi.num_audio_samples = vi.AudioSamplesFromFrames(vi.num_frames);
 }
 
 
