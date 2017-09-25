@@ -212,6 +212,31 @@ PVideoFrame __stdcall SickJumps::GetFrame(int n, IScriptEnvironment* env)
 
 
 
+int __stdcall SickJumps::SetCacheHints(int cachehints, int frame_range)
+{
+	int hints = 0;
+
+	if (cachehints == CACHE_GET_MTMODE)
+	{
+		hints = MT_NICE_FILTER;
+	}
+	else
+	{
+		if (setScriptVariable)
+		{
+			hints = CACHE_ACCESS_SEQ1;
+		}
+		else
+		{
+			hints = CACHE_ACCESS_RAND;
+		}
+	}
+
+	return hints;
+}
+
+
+
 double GetCurrentMultiplier(__int64 current, __int64 first, __int64 last, SFLOAT startMultiplier, SFLOAT fullMultiplier, int mode, IScriptEnvironment * env)
 {
 	double multiplier;
@@ -302,6 +327,6 @@ int SickJumps::CalculateRampInputFrames(int _firstInputFrame, int _totalOutputFr
 		// Don't forget to include the first frame!
 		inFrames++;
 	}
-	
+
 	return inFrames;
 }

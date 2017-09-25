@@ -26,6 +26,7 @@ public:
 
 	void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
 	PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+	int __stdcall SetCacheHints(int cachehints, int frame_range);
 
 	int mode;
 
