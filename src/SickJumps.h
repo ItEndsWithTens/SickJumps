@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include <string>
+
 #include <avisynth.h>
 
 
@@ -19,7 +21,7 @@ public:
 	};
 
   SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _startMultiplier, SFLOAT _fullMultiplier,
-		SFLOAT _inSeconds, SFLOAT _outSeconds, int _mode, IScriptEnvironment* env);
+		SFLOAT _inSeconds, SFLOAT _outSeconds, int _mode, std::string _scriptVariable, IScriptEnvironment* env);
   ~SickJumps();
 
 	void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
@@ -35,6 +37,8 @@ public:
 
 	SFLOAT upSeconds;
 	SFLOAT downSeconds;
+
+	std::string scriptVariable;
 
 private:
 	int CalculateRampInputFrames(int _firstInputFrame, int _totalOutputFrames, SFLOAT _startMultiplier, SFLOAT _endMultiplier, IScriptEnvironment* env);
@@ -68,6 +72,8 @@ private:
 	__int64 rampDownLastOutputSample;
 	__int64 rampDownFirstInputSample;
 	__int64 rampDownLastInputSample;
+
+	bool setScriptVariable;
 };
 
 

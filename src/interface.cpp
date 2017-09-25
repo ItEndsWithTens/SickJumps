@@ -31,7 +31,7 @@ AVSValue __cdecl Create_SickJumps(AVSValue args, void* user_data, IScriptEnviron
 	SFLOAT downSeconds = static_cast<SFLOAT>(args[6].AsFloat(static_cast<SFLOAT>(seconds / 4.0)));
 
 	int mode;
-	std::string modeString = env->Invoke("LCase", args[5].AsString("linear")).AsString();
+	std::string modeString = env->Invoke("LCase", args[7].AsString("linear")).AsString();
 	if (modeString == "spline")
 	{
 		mode = SickJumps::MODE_SPLINE;
@@ -41,7 +41,9 @@ AVSValue __cdecl Create_SickJumps(AVSValue args, void* user_data, IScriptEnviron
 		mode = SickJumps::MODE_LINEAR;
 	}
 
-  return new SickJumps(clip, firstFrame, lastFrame, startMultiplier, fullMultiplier, upSeconds, downSeconds, mode, env);
+	std::string scriptVariable = args[8].AsString("");
+
+  return new SickJumps(clip, firstFrame, lastFrame, startMultiplier, fullMultiplier, upSeconds, downSeconds, mode, scriptVariable, env);
 
 }
 
@@ -53,7 +55,7 @@ extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit3(IScri
 
   AVS_linkage = vectors;
 
-  env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[in_seconds]f[out_seconds]f[mode]s", Create_SickJumps, 0);
+  env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[in_seconds]f[out_seconds]f[mode]s[script_variable]s", Create_SickJumps, 0);
 
   return "`SickJumps' - Speed ramping effect";
 
