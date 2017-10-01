@@ -12,7 +12,7 @@
 
     SickJumps(clip c, int "first_frame", int "last_frame",
               float "start_multiplier", float full_multiplier",
-              float "in_seconds", float "out_seconds", string "mode",
+              float "up_seconds", float "down_seconds", string "mode",
               string "script_variable")
 
     c  clip
@@ -35,8 +35,8 @@
 
       The speed multiplier to use as the target within the ramped portion of c.
 
-    in_seconds  float, default c length / 4.0
-    out_seconds  float, default c length / 4.0
+    up_seconds  float, default c length / 4.0
+    down_seconds  float, default c length / 4.0
 
       The resulting duration, in seconds, of the ramp up and ramp down.
 

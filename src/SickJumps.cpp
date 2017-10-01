@@ -11,10 +11,10 @@
 
 
 SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _startMultiplier, SFLOAT _fullMultiplier,
-	SFLOAT _inSeconds, SFLOAT _outSeconds, int _mode, std::string _scriptVariable, IScriptEnvironment * env)
+	SFLOAT _upSeconds, SFLOAT _downSeconds, int _mode, std::string _scriptVariable, IScriptEnvironment * env)
 	:
 	GenericVideoFilter(_child), startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
-	upSeconds(_inSeconds), downSeconds(_outSeconds), mode(_mode), scriptVariable(_scriptVariable), setScriptVariable(_scriptVariable != "" ? true : false)
+	upSeconds(_upSeconds), downSeconds(_downSeconds), mode(_mode), scriptVariable(_scriptVariable), setScriptVariable(_scriptVariable != "" ? true : false)
 {
 	rampUpFirstInputFrame = _firstFrame;
 	rampDownLastInputFrame = _lastFrame;

@@ -55,7 +55,7 @@ extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit3(IScri
 
   AVS_linkage = vectors;
 
-  env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[in_seconds]f[out_seconds]f[mode]s[script_variable]s", Create_SickJumps, 0);
+  env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[up_seconds]f[down_seconds]f[mode]s[script_variable]s", Create_SickJumps, 0);
 
   return "`SickJumps' - Speed ramping effect";
 
