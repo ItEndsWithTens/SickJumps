@@ -59,6 +59,8 @@ private:
 	int rampDownFirstInputFrame;
 	int rampDownLastInputFrame;
 
+	int afterFirstInputFrame;
+
 	__int64 rampUpFirstOutputSample;
 	__int64 rampUpLastOutputSample;
 	__int64 rampUpFirstInputSample;
@@ -73,6 +75,8 @@ private:
 	__int64 rampDownLastOutputSample;
 	__int64 rampDownFirstInputSample;
 	__int64 rampDownLastInputSample;
+
+	__int64 afterFirstInputSample;
 
 	bool setScriptVariable;
 };

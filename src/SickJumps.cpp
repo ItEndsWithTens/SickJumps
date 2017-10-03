@@ -50,6 +50,8 @@ SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _star
 
 	rampDownFirstInputFrame = fullSpeedLastInputFrame + static_cast<int>(std::round(fullMultiplier));
 
+	afterFirstInputFrame = rampDownLastInputFrame + static_cast<int>(std::round(startMultiplier));
+
 	// Since frame numbers are zero-based, the number of the ramp up's first frame
 	// is also the total "before" frame count.
 	int totalOutputFramesBefore = rampUpFirstOutputFrame;
@@ -78,6 +80,8 @@ SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _star
 
 	rampDownFirstInputSample = (vi.AudioSamplesFromFrames(rampDownFirstInputFrame) - samplesPerFrame) + 1;
 	rampDownLastInputSample = vi.AudioSamplesFromFrames(rampDownLastInputFrame);
+
+	afterFirstInputSample = rampDownLastInputSample + static_cast<__int64>(std::round(startMultiplier));
 
 	vi.num_audio_samples = vi.AudioSamplesFromFrames(vi.num_frames);
 }
@@ -117,7 +121,7 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 		else if (offset > rampDownLastOutputSample)
 		{
 			__int64 distance = (offset - (rampDownLastOutputSample + 1));
-			adjustedSample = rampDownLastInputSample + static_cast<__int64>(startMultiplier) + static_cast<__int64>(std::round(distance * startMultiplier));
+			adjustedSample = afterFirstInputSample + static_cast<__int64>(std::round(distance * startMultiplier));
 		}
 		else if (offset >= fullSpeedFirstOutputSample && offset <= fullSpeedLastOutputSample)
 		{
@@ -167,7 +171,7 @@ PVideoFrame __stdcall SickJumps::GetFrame(int n, IScriptEnvironment* env)
 	else if (n > rampDownLastOutputFrame)
 	{
 		int distance = (n - (rampDownLastOutputFrame + 1));
-		adjustedFrame = rampDownLastInputFrame + static_cast<int>(startMultiplier) + static_cast<int>(std::round(distance * startMultiplier));
+		adjustedFrame = afterFirstInputFrame + static_cast<int>(std::round(distance * startMultiplier));
 
 		scriptVariableValue = startMultiplier;
 	}
