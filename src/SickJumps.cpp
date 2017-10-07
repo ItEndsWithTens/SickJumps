@@ -60,26 +60,25 @@ SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _star
 
 	vi.num_frames = totalOutputFramesBefore + totalOutputFramesDuring + totalOutputFramesAfter;
 
-	// Subtract or add as necessary to ensure the audio ramps run all the way
-	// through the start and end video frames of their respective video ramps.
-	__int64 samplesPerFrame = vi.AudioSamplesFromFrames(1);
-	rampUpFirstOutputSample = (vi.AudioSamplesFromFrames(rampUpFirstOutputFrame) - samplesPerFrame) + 1;
-	rampUpLastOutputSample = vi.AudioSamplesFromFrames(rampUpLastOutputFrame);
+	// Since frames in Avisynth are numbered from zero, a given frame number also
+	// serves as the count of frames before it; the same goes for samples.
+	rampUpFirstOutputSample = vi.AudioSamplesFromFrames(rampUpFirstOutputFrame);
+	rampUpLastOutputSample = vi.AudioSamplesFromFrames(rampUpLastOutputFrame + 1) - 1;
 
-	fullSpeedFirstOutputSample = (vi.AudioSamplesFromFrames(fullSpeedFirstOutputFrame) - samplesPerFrame) + 1;
-	fullSpeedLastOutputSample = vi.AudioSamplesFromFrames(fullSpeedLastOutputFrame);
+	fullSpeedFirstOutputSample = vi.AudioSamplesFromFrames(fullSpeedFirstOutputFrame);
+	fullSpeedLastOutputSample = vi.AudioSamplesFromFrames(fullSpeedLastOutputFrame + 1) - 1;
 
-	rampDownFirstOutputSample = vi.AudioSamplesFromFrames(rampDownFirstOutputFrame - 1) + 1;
-	rampDownLastOutputSample = vi.AudioSamplesFromFrames(rampDownLastOutputFrame);
+	rampDownFirstOutputSample = vi.AudioSamplesFromFrames(rampDownFirstOutputFrame);
+	rampDownLastOutputSample = vi.AudioSamplesFromFrames(rampDownLastOutputFrame + 1) - 1;
 
-	rampUpFirstInputSample = (vi.AudioSamplesFromFrames(rampUpFirstInputFrame) - samplesPerFrame) + 1;
-	rampUpLastInputSample = vi.AudioSamplesFromFrames(rampUpLastOutputFrame);
+	rampUpFirstInputSample = vi.AudioSamplesFromFrames(rampUpFirstInputFrame) + static_cast<__int64>(std::round(startMultiplier));
+	rampUpLastInputSample = vi.AudioSamplesFromFrames(rampUpLastInputFrame) - static_cast<__int64>(std::round(fullMultiplier));
 
-	fullSpeedFirstInputSample = (vi.AudioSamplesFromFrames(fullSpeedFirstInputFrame) - samplesPerFrame) + 1;
-	fullSpeedLastInputSample = vi.AudioSamplesFromFrames(fullSpeedLastInputFrame);
+	fullSpeedFirstInputSample = vi.AudioSamplesFromFrames(fullSpeedFirstInputFrame) + static_cast<__int64>(std::round(fullMultiplier));
+	fullSpeedLastInputSample = vi.AudioSamplesFromFrames(fullSpeedLastInputFrame) - static_cast<__int64>(std::round(fullMultiplier));
 
-	rampDownFirstInputSample = (vi.AudioSamplesFromFrames(rampDownFirstInputFrame) - samplesPerFrame) + 1;
-	rampDownLastInputSample = vi.AudioSamplesFromFrames(rampDownLastInputFrame);
+	rampDownFirstInputSample = vi.AudioSamplesFromFrames(rampDownFirstInputFrame) + static_cast<__int64>(std::round(fullMultiplier));
+	rampDownLastInputSample = vi.AudioSamplesFromFrames(rampDownLastInputFrame) - static_cast<__int64>(std::round(startMultiplier));
 
 	afterFirstInputSample = rampDownLastInputSample + static_cast<__int64>(std::round(startMultiplier));
 
