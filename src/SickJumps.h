@@ -64,16 +64,13 @@ private:
 	__int64 rampUpFirstOutputSample;
 	__int64 rampUpLastOutputSample;
 	__int64 rampUpFirstInputSample;
-	__int64 rampUpLastInputSample;
 
 	__int64 fullSpeedFirstOutputSample;
 	__int64 fullSpeedLastOutputSample;
 	__int64 fullSpeedFirstInputSample;
-	__int64 fullSpeedLastInputSample;
 
 	__int64 rampDownFirstOutputSample;
 	__int64 rampDownLastOutputSample;
-	__int64 rampDownFirstInputSample;
 	__int64 rampDownLastInputSample;
 
 	__int64 afterFirstInputSample;

@@ -72,12 +72,7 @@ SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _star
 	rampDownLastOutputSample = vi.AudioSamplesFromFrames(rampDownLastOutputFrame + 1) - 1;
 
 	rampUpFirstInputSample = vi.AudioSamplesFromFrames(rampUpFirstInputFrame) + static_cast<__int64>(std::round(startMultiplier));
-	rampUpLastInputSample = vi.AudioSamplesFromFrames(rampUpLastInputFrame) - static_cast<__int64>(std::round(fullMultiplier));
-
 	fullSpeedFirstInputSample = vi.AudioSamplesFromFrames(fullSpeedFirstInputFrame) + static_cast<__int64>(std::round(fullMultiplier));
-	fullSpeedLastInputSample = vi.AudioSamplesFromFrames(fullSpeedLastInputFrame) - static_cast<__int64>(std::round(fullMultiplier));
-
-	rampDownFirstInputSample = vi.AudioSamplesFromFrames(rampDownFirstInputFrame) + static_cast<__int64>(std::round(fullMultiplier));
 	rampDownLastInputSample = vi.AudioSamplesFromFrames(rampDownLastInputFrame) - static_cast<__int64>(std::round(startMultiplier));
 
 	afterFirstInputSample = rampDownLastInputSample + static_cast<__int64>(std::round(startMultiplier));
