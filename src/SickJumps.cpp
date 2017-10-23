@@ -115,24 +115,25 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 
 		if (offset < rampUpFirstOutputSample)
 		{
-			adjustedSample = static_cast<__int64>(std::round(offset * startMultiplier));
+			double distance = static_cast<double>(offset);
+			adjustedSample = static_cast<__int64>(std::round(distance * startMultiplier));
 		}
 		else if (offset > rampDownLastOutputSample)
 		{
-			__int64 distance = (offset - (rampDownLastOutputSample + 1));
+			double distance = static_cast<double>(offset - (rampDownLastOutputSample + 1));
 			adjustedSample = afterFirstInputSample + static_cast<__int64>(std::round(distance * startMultiplier));
 		}
 		else if (offset >= fullSpeedFirstOutputSample && offset <= fullSpeedLastOutputSample)
 		{
 			double multiplier = fullMultiplier;
-			__int64 distance = offset - fullSpeedFirstOutputSample;
+			double distance = static_cast<double>(offset - fullSpeedFirstOutputSample);
 			adjustedSample = fullSpeedFirstInputSample + static_cast<__int64>(distance * multiplier);
 		}
 		else if (offset >= rampUpFirstOutputSample && offset <= rampUpLastOutputSample)
 		{
 			SFLOAT averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
 			double multiplier = GetCurrentMultiplier(offset, rampUpFirstOutputSample, rampUpLastOutputSample, startMultiplier, averageMultiplier, mode, env);
-			__int64 distance = offset - rampUpFirstOutputSample;
+			double distance = static_cast<double>(offset - rampUpFirstOutputSample);
 			adjustedSample = rampUpFirstInputSample + static_cast<__int64>(std::round(distance * multiplier));
 		}
 		else // Ramp down
@@ -140,7 +141,7 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 			SFLOAT averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
 			double multiplier = GetCurrentMultiplier(offset, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, averageMultiplier, mode, env);
 			multiplier = (startMultiplier + averageMultiplier) - multiplier;
-			__int64 distance = rampDownLastOutputSample - offset;
+			double distance = static_cast<double>(rampDownLastOutputSample - offset);
 			adjustedSample = rampDownLastInputSample - static_cast<__int64>(std::floor(distance * multiplier));
 		}
 
