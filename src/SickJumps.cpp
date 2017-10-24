@@ -122,7 +122,7 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 		{
 			double multiplier = fullMultiplier;
 			double distance = static_cast<double>(offset - fullSpeedFirstOutputSample);
-			adjustedSample = fullSpeedFirstInputSample + static_cast<__int64>(distance * multiplier);
+			adjustedSample = fullSpeedFirstInputSample + static_cast<__int64>(std::round(distance * multiplier));
 		}
 		else if (offset >= rampUpFirstOutputSample && offset <= rampUpLastOutputSample)
 		{
