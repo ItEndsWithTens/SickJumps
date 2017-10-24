@@ -80,7 +80,7 @@ private:
 
 
 
-double GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, SFLOAT startMultiplier, SFLOAT fullMultiplier, int mode, IScriptEnvironment * env);
+double GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, SFLOAT startMultiplier, SFLOAT fullMultiplier, int mode);
 double ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, double outMax);
 
 

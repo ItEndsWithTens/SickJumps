@@ -128,14 +128,14 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 		else if (offset >= rampUpFirstOutputSample && offset <= rampUpLastOutputSample)
 		{
 			SFLOAT averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
-			double multiplier = GetCurrentMultiplier(offset, rampUpFirstOutputSample, rampUpLastOutputSample, startMultiplier, averageMultiplier, mode, env);
+			double multiplier = GetCurrentMultiplier(offset, rampUpFirstOutputSample, rampUpLastOutputSample, startMultiplier, averageMultiplier, mode);
 			double distance = static_cast<double>(offset - rampUpFirstOutputSample);
 			adjustedSample = rampUpFirstInputSample + static_cast<__int64>(std::round(distance * multiplier));
 		}
 		else // Ramp down
 		{
 			SFLOAT averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
-			double multiplier = GetCurrentMultiplier(offset, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, averageMultiplier, mode, env);
+			double multiplier = GetCurrentMultiplier(offset, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, averageMultiplier, mode);
 			multiplier = (startMultiplier + averageMultiplier) - multiplier;
 			double distance = static_cast<double>(rampDownLastOutputSample - offset);
 			adjustedSample = rampDownLastInputSample - static_cast<__int64>(std::floor(distance * multiplier));
@@ -185,15 +185,16 @@ PVideoFrame __stdcall SickJumps::GetFrame(int n, IScriptEnvironment* env)
 		// or clips will speed up too far; like walking while on a moving sidewalk.
 		SFLOAT averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
 		int distance = n - rampUpFirstOutputFrame;
-		double multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, averageMultiplier, mode, env);
+		double multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, averageMultiplier, mode);
 		adjustedFrame = rampUpFirstInputFrame + static_cast<int>(std::round(distance * multiplier));
 
-		scriptVariableValue = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, fullMultiplier, mode, env);
+		scriptVariableValue = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, fullMultiplier, mode);
+		text = "ramp up";
 	}
 	else // Ramp down
 	{
 		SFLOAT averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
-		double multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, averageMultiplier, mode, env);
+		double multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, averageMultiplier, mode);
 		multiplier = (startMultiplier + averageMultiplier) - multiplier;
 		int distance = rampDownLastOutputFrame - n;
 
@@ -202,7 +203,7 @@ PVideoFrame __stdcall SickJumps::GetFrame(int n, IScriptEnvironment* env)
 		// floored to try to avoid overlapping the full speed segment's end.
 		adjustedFrame = rampDownLastInputFrame - static_cast<int>(std::floor(distance * multiplier));
 
-		scriptVariableValue = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, fullMultiplier, mode, env);
+		scriptVariableValue = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, fullMultiplier, mode);
 		scriptVariableValue = (startMultiplier + fullMultiplier) - scriptVariableValue;
 	}
 
@@ -241,7 +242,7 @@ int __stdcall SickJumps::SetCacheHints(int cachehints, int frame_range)
 
 
 
-double GetCurrentMultiplier(__int64 current, __int64 first, __int64 last, SFLOAT startMultiplier, SFLOAT fullMultiplier, int mode, IScriptEnvironment * env)
+double GetCurrentMultiplier(__int64 current, __int64 first, __int64 last, SFLOAT startMultiplier, SFLOAT fullMultiplier, int mode)
 {
 	double multiplier;
 
@@ -259,32 +260,7 @@ double GetCurrentMultiplier(__int64 current, __int64 first, __int64 last, SFLOAT
 	}
 	else
 	{
-		if (mode == SickJumps::MODE_SPLINE)
-		{
-			SFLOAT nudge = ((fullMultiplier - startMultiplier) * 0.1f);
-
-			// The casts are tragic, yes, but such are the ways of Avisynth floats.
-			SFLOAT
-				x0 = static_cast<SFLOAT>(first),
-				y0 = static_cast<SFLOAT>(startMultiplier),
-
-				x1 = static_cast<SFLOAT>(first + ((last - first) * 0.25)),
-				y1 = static_cast<SFLOAT>(startMultiplier + nudge),
-
-				x2 = static_cast<SFLOAT>(last - ((last - first) * 0.25)),
-				y2 = static_cast<SFLOAT>(fullMultiplier - nudge),
-
-				x3 = static_cast<SFLOAT>(last),
-				y3 = static_cast<SFLOAT>(fullMultiplier);
-
-			AVSValue args[10] = { static_cast<double>(current), x0, y0, x1, y1, x2, y2, x3, y3, false };
-
-			multiplier = env->Invoke("Spline", AVSValue(args, 10)).AsFloat();
-		}
-		else
-		{
-			multiplier = ScaleToRange(current, first, last, startMultiplier, fullMultiplier);
-		}
+		multiplier = ScaleToRange(current, first, last, startMultiplier, fullMultiplier);
 	}
 
 	return multiplier;
@@ -321,7 +297,7 @@ int SickJumps::CalculateRampInputFrames(int _firstInputFrame, int _totalOutputFr
 	for (int i = 0; i < _totalOutputFrames; ++i)
 	{
 		SFLOAT averageMultiplier = (startMultiplier + _endMultiplier) / 2.0f;
-		double step = GetCurrentMultiplier(i, 0, _totalOutputFrames - 1, startMultiplier, averageMultiplier, mode, env);
+		double step = GetCurrentMultiplier(i, 0, _totalOutputFrames - 1, startMultiplier, averageMultiplier, mode);
 		inFrames = static_cast<int>(std::round(step * i));
 		int breakvar = 4;
 	}
