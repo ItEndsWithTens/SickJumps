@@ -9,6 +9,8 @@
 
 #include <avisynth.h>
 
+#include <SickJumpsCore.h>
+
 
 
 class SickJumps : public GenericVideoFilter
@@ -42,46 +44,10 @@ public:
 	std::string scriptVariable;
 
 private:
-	int CalculateRampInputFrames(int _firstInputFrame, int _totalOutputFrames, SFLOAT _startMultiplier, SFLOAT _endMultiplier, IScriptEnvironment* env);
-
-	int rampUpFirstOutputFrame;
-	int rampUpLastOutputFrame;
-	int rampUpFirstInputFrame;
-	int rampUpLastInputFrame;
-	
-	int fullSpeedFirstOutputFrame;
-	int fullSpeedLastOutputFrame;
-	int fullSpeedFirstInputFrame;
-	int fullSpeedLastInputFrame; 
-	
-	int rampDownFirstOutputFrame;
-	int rampDownLastOutputFrame;
-	int rampDownFirstInputFrame;
-	int rampDownLastInputFrame;
-
-	int afterFirstInputFrame;
-
-	__int64 rampUpFirstOutputSample;
-	__int64 rampUpLastOutputSample;
-	__int64 rampUpFirstInputSample;
-
-	__int64 fullSpeedFirstOutputSample;
-	__int64 fullSpeedLastOutputSample;
-	__int64 fullSpeedFirstInputSample;
-
-	__int64 rampDownFirstOutputSample;
-	__int64 rampDownLastOutputSample;
-	__int64 rampDownLastInputSample;
-
-	__int64 afterFirstInputSample;
-
 	bool setScriptVariable;
+
+	SickJumpsCore core;
 };
-
-
-
-double GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, SFLOAT startMultiplier, SFLOAT fullMultiplier, int mode);
-double ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, double outMax);
 
 
 
