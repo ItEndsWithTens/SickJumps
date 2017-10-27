@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include <utility>
-
 
 
 SickJumpsCore::SickJumpsCore()
@@ -251,7 +249,7 @@ int CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double 
 
 	for (int i = 0; i < totalOutputFrames; ++i)
 	{
-		double averageMultiplier = (startMultiplier + endMultiplier) / 2.0f;
+		double averageMultiplier = (startMultiplier + endMultiplier) / 2.0;
 		double step = GetCurrentMultiplier(i, 0, totalOutputFrames - 1, startMultiplier, averageMultiplier, mode);
 		inFrames = static_cast<int>(std::round(step * i));
 		int breakvar = 4;
@@ -275,7 +273,7 @@ __int64 CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputS
 
 	for (__int64 i = 0; i < totalOutputSamples; ++i)
 	{
-		double averageMultiplier = (startMultiplier + endMultiplier) / 2.0f;
+		double averageMultiplier = (startMultiplier + endMultiplier) / 2.0;
 		double step = GetCurrentMultiplier(i, 0, totalOutputSamples - 1, startMultiplier, averageMultiplier, mode);
 		inFrames = static_cast<__int64>(std::round(step * static_cast<double>(i)));
 		int breakvar = 4;
