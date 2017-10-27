@@ -19,6 +19,7 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	mode(_mode)
 {
 	originalFrameCount = _frameCount;
+	originalSampleCount = _audioSamplesPerFrame * originalFrameCount;
 
 	rampUpFirstInputFrame = _firstFrame;
 	rampDownLastInputFrame = _lastFrame;
@@ -40,9 +41,9 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	// After an initial rough placement, snap the full speed frame count to the
 	// nearest multiple of the full multiplier, relative to the section start.
 	fullSpeedLastInputFrame = rampDownLastInputFrame - CalculateRampInputFrames(0, rampDownOutputFrames, startMultiplier, fullMultiplier, mode);
-	int fullSpeedBaseInputFrames = (fullSpeedLastInputFrame - fullSpeedFirstInputFrame) + 1;
-	int fullSpeedSnappedInputFrames = static_cast<int>(std::round(fullSpeedBaseInputFrames / fullMultiplier) * fullMultiplier);
-	fullSpeedLastInputFrame = fullSpeedFirstInputFrame + fullSpeedSnappedInputFrames;
+	int diff = fullSpeedLastInputFrame - fullSpeedFirstInputFrame;
+	int diffSnapped = static_cast<int>(std::round(diff / fullMultiplier) * fullMultiplier);
+	fullSpeedLastInputFrame = fullSpeedFirstInputFrame + diffSnapped;
 	int fullSpeedTotalInputFrames = (fullSpeedLastInputFrame - fullSpeedFirstInputFrame) + 1;
 
 	fullSpeedFirstOutputFrame = rampUpLastOutputFrame + 1;

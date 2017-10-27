@@ -19,6 +19,9 @@ SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _star
 {
 	core = SickJumpsCore(vi.num_frames, _firstFrame, _lastFrame, vi.fps_numerator / vi.fps_denominator,
 		_upSeconds, _downSeconds, _startMultiplier, _fullMultiplier, vi.AudioSamplesFromFrames(1), _mode);
+
+	vi.num_frames = core.adjustedFrameCount;
+	vi.num_audio_samples = core.adjustedSampleCount;
 }
 
 
