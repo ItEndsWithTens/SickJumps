@@ -59,7 +59,7 @@ public:
 	__int64 afterFirstInputSample;
 };
 
-int CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier, int mode);
-__int64 CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier, int mode); 
-double GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, double startMultiplier, double fullMultiplier, int mode);
-double ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, double outMax);
+int __declspec(dllexport) CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier, int mode);
+__int64 __declspec(dllexport) CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier, int mode);
+double __declspec(dllexport) GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, double startMultiplier, double fullMultiplier, int mode);
+double __declspec(dllexport) ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, double outMax);

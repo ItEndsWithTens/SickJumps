@@ -40,6 +40,8 @@ set(SRCS
   src/interface.cpp
   src/SickJumps.h
   src/SickJumps.cpp
+  src/SickJumpsCore.h
+  src/SickJumpsCore.cpp
 )
 
 if(WIN32)
@@ -61,7 +63,7 @@ string(REPLACE " " "_" SICKJUMPS_HOST_DEFINE ${SICKJUMPS_HOST_DEFINE})
 
 # When defined as SHARED, the plugin builds correctly in Windows and Linux, but
 # it is technically a MODULE, and that distinction is important in macOS.
-add_library(${PROJECT_NAME} MODULE ${SRCS})
+add_library(${PROJECT_NAME} SHARED ${SRCS})
 set_target_properties(
   ${PROJECT_NAME}
   PROPERTIES
@@ -164,6 +166,55 @@ if(NOT "${SICKJUMPS_PLUGINS_DIR}" STREQUAL "")
     ${PROJECT_NAME}-copy ALL
     COMMAND ${CMAKE_COMMAND} -E copy
     $<TARGET_FILE:${PROJECT_NAME}> ${SICKJUMPS_PLUGINS_DIR}
+  )
+endif()
+
+option(SICKJUMPS_TESTS "Enable testing with Catch framework." TRUE)
+if(SICKJUMPS_TESTS)
+  set(SRCS_TEST
+    test/include/catch/catch.hpp
+    
+    ${SICKJUMPS_HOST_HDR}
+    test/src/main.cpp
+    test/src/frames.cpp
+  )
+  
+  include_directories(
+    test/include
+    src
+  )
+  
+  set(
+    SICKJUMPS_TEST_DESCRIPTION
+    "Test executable for the ${SICKJUMPS_DESCRIPTION}"
+  )
+  
+  if(WIN32)
+    configure_file(
+      test/src/SickJumps-test.rc.in
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/src/SickJumps-test.rc
+    )
+    list(APPEND SRCS_TEST test/src/SickJumps-test.rc)
+    if(MSVC)
+      source_group("Resource Files" FILES test/src/SickJumps-test.rc)
+    endif()
+  endif()
+  
+  add_executable(${PROJECT_NAME}-test ${SRCS_TEST})
+  
+  target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+  
+  # This ensures the tests are run after every build; I need to target my custom
+  # -copy target instead of the project itself to make sure the latest version
+  # of the plugin is the one being tested.
+  add_custom_command(TARGET ${PROJECT_NAME}-copy POST_BUILD
+    COMMAND ${PROJECT_NAME}-test
+  )
+
+  set_target_properties(
+    ${PROJECT_NAME}-test
+    PROPERTIES
+    COMPILE_DEFINITIONS "SICKJUMPS_HOST_${SICKJUMPS_HOST_DEFINE}"
   )
 endif()
 
