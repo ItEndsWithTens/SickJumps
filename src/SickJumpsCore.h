@@ -5,9 +5,9 @@ class __declspec(dllexport) SickJumpsCore
 {
 public:
 	SickJumpsCore();
-	SickJumpsCore(int frameCount, int firstFrame, int lastFrame, double fps,
-		double upSeconds, double downSeconds, double startMultiplier, double endMultiplier,
-		__int64 audioSamplesPerFrame, int _mode);
+	SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, double _fps,
+		double _upSeconds, double _downSeconds, double _startMultiplier, double _endMultiplier,
+		__int64 _audioSamplesPerFrame, int _mode);
 	~SickJumpsCore();
 
 	__int64 GetAdjustedSampleNumber(__int64 n);
@@ -15,11 +15,13 @@ public:
 
 	int mode;
 
+	double upSeconds;
+	double downSeconds; 
+	
 	double startMultiplier;
 	double fullMultiplier;
 
-	double upSeconds;
-	double downSeconds;
+	__int64 audioSamplesPerFrame;
 
 	int originalFrameCount;
 	int adjustedFrameCount;

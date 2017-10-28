@@ -54,3 +54,41 @@ TEST_CASE()
 	rampDownFirstInputFrame += static_cast<int>(std::round(c.fullMultiplier));
 	REQUIRE(c.rampDownFirstInputFrame == rampDownFirstInputFrame);
 }
+
+TEST_CASE("Ramps start and end on proper audio samples with a full multiplier of 1.0")
+{
+	int startFrame = 10000;
+	int endFrame = 90000;
+
+	SickJumpsCore c = SickJumpsCore(100000, startFrame, endFrame, 60.0, 2.0, 2.0, 1.0, 1.0, 800, SickJumps::MODE_LINEAR);
+
+	REQUIRE(c.rampUpFirstInputSample == c.audioSamplesPerFrame * startFrame);
+	REQUIRE(c.rampDownLastInputSample == (c.audioSamplesPerFrame * (endFrame + 1)) - 1);
+
+	REQUIRE(c.GetAdjustedSampleNumber(0) == 0);
+	REQUIRE(c.GetAdjustedSampleNumber(startFrame * c.audioSamplesPerFrame) == startFrame * c.audioSamplesPerFrame);
+}
+
+TEST_CASE("Ramps start and end on proper audio samples with a full multiplier of 2.0")
+{
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 2.0, 800, SickJumps::MODE_LINEAR);
+
+	REQUIRE(c.rampUpFirstInputSample == c.audioSamplesPerFrame * 10000);
+	REQUIRE(c.rampDownLastInputSample == (c.audioSamplesPerFrame * 90001) - 1);
+}
+
+TEST_CASE("Ramps start and end on proper audio samples with a full multiplier of 4.0")
+{
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 4.0, 800, SickJumps::MODE_LINEAR);
+
+	REQUIRE(c.rampUpFirstInputSample == c.audioSamplesPerFrame * 10000);
+	REQUIRE(c.rampDownLastInputSample == (c.audioSamplesPerFrame * 90001) - 1);
+}
+
+TEST_CASE("Ramps start and end on proper audio samples with a full multiplier of 8.0")
+{
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 800, SickJumps::MODE_LINEAR);
+
+	REQUIRE(c.rampUpFirstInputSample == c.audioSamplesPerFrame * 10000);
+	REQUIRE(c.rampDownLastInputSample == (c.audioSamplesPerFrame * 90001) - 1);
+}

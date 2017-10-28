@@ -16,7 +16,7 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	:
 	upSeconds(_upSeconds), downSeconds(_downSeconds),
 	startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
-	mode(_mode)
+	audioSamplesPerFrame(_audioSamplesPerFrame), mode(_mode)
 {
 	originalFrameCount = _frameCount;
 	originalSampleCount = _audioSamplesPerFrame * originalFrameCount;
