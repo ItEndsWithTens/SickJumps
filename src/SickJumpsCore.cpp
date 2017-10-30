@@ -17,41 +17,42 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	upSeconds(_upSeconds), downSeconds(_downSeconds),
 	startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
 	audioSamplesPerFrame(_audioSamplesPerFrame), mode(_mode),
-	originalFrameCount(_frameCount), originalSampleCount(_audioSamplesPerFrame * _frameCount),
-	rampUpFirstInputFrame(_firstFrame), rampDownLastInputFrame(_lastFrame)
+	originalFrameCount(_frameCount), originalSampleCount(_audioSamplesPerFrame * _frameCount)
 {
 	// Ranges in Avisynth tend to feel more natural when inclusive, but for a pair
 	// of durations explicitly set by the user, exclusive is more precise.
 	int rampUpOutputFrames = static_cast<int>(_fps * upSeconds);
 	int rampDownOutputFrames = static_cast<int>(_fps * downSeconds);
 
+	// -- Input frames -- //
+
+	// Establish preliminary locations.
+	rampUpFirstInputFrame = _firstFrame;
+	rampUpLastInputFrame = (rampUpFirstInputFrame + CalculateRampInputFrames(0, rampUpOutputFrames, startMultiplier, fullMultiplier, mode)) - 1;
+	rampDownLastInputFrame = _lastFrame;
+	rampDownFirstInputFrame = (rampDownLastInputFrame - CalculateRampInputFrames(0, rampDownOutputFrames, startMultiplier, fullMultiplier, mode)) + 1;
+	fullSpeedFirstInputFrame = rampUpLastInputFrame + static_cast<int>(std::round(fullMultiplier));
+	fullSpeedLastInputFrame = rampDownFirstInputFrame - static_cast<int>(std::round(fullMultiplier));
+	afterFirstInputFrame = rampDownLastInputFrame + static_cast<int>(std::round(startMultiplier));
+
+	// Tweak as necessary.
+	int fullDiff = fullSpeedLastInputFrame - fullSpeedFirstInputFrame;
+	int fullDiffSnapped = static_cast<int>(std::round(fullDiff / fullMultiplier) * fullMultiplier);
+	fullSpeedLastInputFrame = fullSpeedFirstInputFrame + fullDiffSnapped;
+	rampDownFirstInputFrame = fullSpeedLastInputFrame + static_cast<int>(std::round(fullMultiplier));
+	
+	// -- Output frames -- //
+
 	rampUpFirstOutputFrame = static_cast<int>(std::round(rampUpFirstInputFrame / startMultiplier));
 	rampUpLastOutputFrame = (rampUpFirstOutputFrame + rampUpOutputFrames) - 1;
-
-	// The total number of ramp frames will be the same no matter where it starts,
-	// so using an input range of 0 through rampUpOutputFrames works just fine.
-	rampUpLastInputFrame = (rampUpFirstInputFrame + CalculateRampInputFrames(0, rampUpOutputFrames, startMultiplier, fullMultiplier, mode)) - 1;
-
-	fullSpeedFirstInputFrame = rampUpLastInputFrame + static_cast<int>(std::round(fullMultiplier));
-
-	// After an initial rough placement, snap the full speed frame count to the
-	// nearest multiple of the full multiplier, relative to the section start.
-	fullSpeedLastInputFrame = rampDownLastInputFrame - CalculateRampInputFrames(0, rampDownOutputFrames, startMultiplier, fullMultiplier, mode);
-	int diff = fullSpeedLastInputFrame - fullSpeedFirstInputFrame;
-	int diffSnapped = static_cast<int>(std::round(diff / fullMultiplier) * fullMultiplier);
-	fullSpeedLastInputFrame = fullSpeedFirstInputFrame + diffSnapped;
-	int fullSpeedTotalInputFrames = (fullSpeedLastInputFrame - fullSpeedFirstInputFrame) + 1;
-
 	fullSpeedFirstOutputFrame = rampUpLastOutputFrame + 1;
-	int fullSpeedTotalOutputFrames = static_cast<int>(std::round(fullSpeedTotalInputFrames / fullMultiplier));
+	
+	int fullSpeedTotalInputFrames = (fullSpeedLastInputFrame - fullSpeedFirstInputFrame) + 1;
+	int fullSpeedTotalOutputFrames = static_cast<int>(std::ceil(fullSpeedTotalInputFrames / fullMultiplier));
 	fullSpeedLastOutputFrame = (fullSpeedFirstOutputFrame + fullSpeedTotalOutputFrames) - 1;
 
 	rampDownFirstOutputFrame = fullSpeedLastOutputFrame + 1;
 	rampDownLastOutputFrame = (rampDownFirstOutputFrame + rampDownOutputFrames) - 1;
-
-	rampDownFirstInputFrame = fullSpeedLastInputFrame + static_cast<int>(std::round(fullMultiplier));
-
-	afterFirstInputFrame = rampDownLastInputFrame + static_cast<int>(std::round(startMultiplier));
 
 	// Since frame numbers are zero-based, the number of the ramp up's first frame
 	// is also the total "before" frame count.
@@ -176,11 +177,7 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, averageMultiplier, mode);
 		multiplier = (startMultiplier + averageMultiplier) - multiplier;
 		int distance = rampDownLastOutputFrame - n;
-
-		// The inside of the down ramp is a good place to hide the potential seam from
-		// allowing arbitrary start/end frames and start/full multipliers; this gets
-		// floored to try to avoid overlapping the full speed segment's end.
-		adjustedFrame = rampDownLastInputFrame - static_cast<int>(std::floor(distance * multiplier));
+		adjustedFrame = rampDownLastInputFrame - static_cast<int>(std::round(distance * multiplier));
 
 		// Now get the friendly display version of the multiplier.
 		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, fullMultiplier, mode);
