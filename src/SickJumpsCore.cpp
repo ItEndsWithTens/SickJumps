@@ -16,14 +16,10 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	:
 	upSeconds(_upSeconds), downSeconds(_downSeconds),
 	startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
-	audioSamplesPerFrame(_audioSamplesPerFrame), mode(_mode)
+	audioSamplesPerFrame(_audioSamplesPerFrame), mode(_mode),
+	originalFrameCount(_frameCount), originalSampleCount(_audioSamplesPerFrame * _frameCount),
+	rampUpFirstInputFrame(_firstFrame), rampDownLastInputFrame(_lastFrame)
 {
-	originalFrameCount = _frameCount;
-	originalSampleCount = _audioSamplesPerFrame * originalFrameCount;
-
-	rampUpFirstInputFrame = _firstFrame;
-	rampDownLastInputFrame = _lastFrame;
-
 	// Ranges in Avisynth tend to feel more natural when inclusive, but for a pair
 	// of durations explicitly set by the user, exclusive is more precise.
 	int rampUpOutputFrames = static_cast<int>(_fps * upSeconds);
