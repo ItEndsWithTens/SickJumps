@@ -7,9 +7,9 @@
 
 #include <string>
 
-#include <avisynth.h>
+#include "avisynth.h"
 
-#include <SickJumpsCore.h>
+#include "SickJumpsCore.h"
 
 
 

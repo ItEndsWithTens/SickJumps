@@ -1,9 +1,9 @@
 #define CATCH_CONFIG_RUNNER
-#include <catch/catch.hpp>
+#include "catch/catch.hpp"
 
 #include <Windows.h>
 
-#include <avisynth.h>
+#include "avisynth.h"
 
 
 

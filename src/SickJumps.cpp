@@ -7,7 +7,7 @@
 #include <string>
 #include <tuple>
 
-#include <avisynth.h>
+#include "avisynth.h"
 
 
 
