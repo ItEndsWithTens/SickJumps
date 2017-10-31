@@ -177,6 +177,7 @@ if(SICKJUMPS_TESTS)
     ${SICKJUMPS_HOST_HDR}
     test/src/main.cpp
     test/src/frames.cpp
+    test/src/samples.cpp
   )
   
   include_directories(

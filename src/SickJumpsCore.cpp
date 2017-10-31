@@ -19,12 +19,14 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	audioSamplesPerFrame(_audioSamplesPerFrame), mode(_mode),
 	originalFrameCount(_frameCount), originalSampleCount(_audioSamplesPerFrame * _frameCount)
 {
+	// -- Video -- //
+
 	// Ranges in Avisynth tend to feel more natural when inclusive, but for a pair
 	// of durations explicitly set by the user, exclusive is more precise.
 	int rampUpOutputFrames = static_cast<int>(_fps * upSeconds);
 	int rampDownOutputFrames = static_cast<int>(_fps * downSeconds);
 
-	// -- Input frames -- //
+	// -- Input frames
 
 	// Establish preliminary locations.
 	rampUpFirstInputFrame = _firstFrame;
@@ -41,7 +43,7 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	fullSpeedLastInputFrame = fullSpeedFirstInputFrame + fullDiffSnapped;
 	rampDownFirstInputFrame = fullSpeedLastInputFrame + static_cast<int>(std::round(fullMultiplier));
 	
-	// -- Output frames -- //
+	// -- Output frames
 
 	rampUpFirstOutputFrame = static_cast<int>(std::round(rampUpFirstInputFrame / startMultiplier));
 	rampUpLastOutputFrame = (rampUpFirstOutputFrame + rampUpOutputFrames) - 1;
@@ -62,26 +64,43 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 
 	adjustedFrameCount = totalOutputFramesBefore + totalOutputFramesDuring + totalOutputFramesAfter;
 
-	// Since frames in Avisynth are numbered from zero, a given frame number also
-	// serves as the count of frames before it; the same goes for samples.
-	rampUpFirstOutputSample = _audioSamplesPerFrame * rampUpFirstOutputFrame;
-	rampUpLastOutputSample = (_audioSamplesPerFrame * (rampUpLastOutputFrame + 1)) - 1;
+	// -- Audio -- //
 
-	fullSpeedFirstOutputSample = _audioSamplesPerFrame * fullSpeedFirstOutputFrame;
-	fullSpeedLastOutputSample = (_audioSamplesPerFrame * (fullSpeedLastOutputFrame + 1)) - 1;
+	__int64 rampUpOutputSamples = audioSamplesPerFrame * rampUpOutputFrames;
+	__int64 rampDownOutputSamples = audioSamplesPerFrame * rampDownOutputFrames;
 
-	rampDownFirstOutputSample = _audioSamplesPerFrame * rampDownFirstOutputFrame;
-	rampDownLastOutputSample = (_audioSamplesPerFrame * (rampDownLastOutputFrame + 1)) - 1;
-
+	// -- Input samples
+	
 	rampUpFirstInputSample = _audioSamplesPerFrame * rampUpFirstInputFrame;
+	rampUpLastInputSample = (rampUpFirstInputSample + CalculateRampInputSamples(0, rampUpOutputSamples, startMultiplier, fullMultiplier, mode)) - 1;
 	rampDownLastInputSample = (_audioSamplesPerFrame * (rampDownLastInputFrame + 1)) - 1;
-
-	__int64 rampUpInputSamples = CalculateRampInputSamples(0, _audioSamplesPerFrame * rampUpOutputFrames, startMultiplier, fullMultiplier, mode);
-	fullSpeedFirstInputSample = ((rampUpFirstInputSample + rampUpInputSamples) - 1) + static_cast<__int64>(std::round(fullMultiplier));
-
+	rampDownFirstInputSample = (rampDownLastInputSample - CalculateRampInputSamples(0, rampDownOutputSamples, startMultiplier, fullMultiplier, mode)) + 1;
+	fullSpeedFirstInputSample = rampUpLastInputSample + static_cast<__int64>(std::round(fullMultiplier));
+	fullSpeedLastInputSample = rampDownFirstInputSample - static_cast<__int64>(std::round(fullMultiplier));
 	afterFirstInputSample = rampDownLastInputSample + static_cast<__int64>(std::round(startMultiplier));
 
-	adjustedSampleCount = _audioSamplesPerFrame * adjustedFrameCount;
+	__int64 fullDiffSamples = fullSpeedLastInputSample - fullSpeedFirstInputSample;
+	__int64 fullDiffSamplesSnapped = static_cast<__int64>(std::round(fullDiffSamples / fullMultiplier) * fullMultiplier);
+	fullSpeedLastInputSample = fullSpeedFirstInputSample + fullDiffSamplesSnapped;
+	rampDownFirstInputSample = fullSpeedLastInputSample + static_cast<__int64>(std::round(fullMultiplier));
+
+	// -- Output samples
+
+	rampUpFirstOutputSample = static_cast<__int64>(std::round(rampUpFirstInputSample / startMultiplier));
+	rampUpLastOutputSample = (rampUpFirstOutputSample + rampUpOutputSamples) - 1;
+	fullSpeedFirstOutputSample = rampUpLastOutputSample + 1;
+
+	__int64 fullSpeedTotalInputSamples = (fullSpeedLastInputSample - fullSpeedFirstInputSample) + 1;
+	__int64 fullSpeedTotalOutputSamples = static_cast<__int64>(std::ceil(fullSpeedTotalInputSamples / fullMultiplier));
+	fullSpeedLastOutputSample = (fullSpeedFirstOutputSample + fullSpeedTotalOutputSamples) - 1;
+
+	rampDownFirstOutputSample = fullSpeedLastOutputSample + 1;
+	rampDownLastOutputSample = (rampDownFirstOutputSample + rampDownOutputSamples) - 1;
+
+	__int64 totalOutputSamplesBefore = rampUpFirstOutputSample;
+	__int64 totalOutputSamplesDuring = rampUpOutputSamples + fullSpeedTotalOutputSamples + rampDownOutputSamples;
+	__int64 totalOutputSamplesAfter = static_cast<__int64>(std::floor((originalSampleCount - 1 - rampDownLastInputSample) / startMultiplier));
+	adjustedSampleCount = totalOutputSamplesBefore + totalOutputSamplesDuring + totalOutputSamplesAfter;
 }
 
 
@@ -114,18 +133,18 @@ __int64 SickJumpsCore::GetAdjustedSampleNumber(__int64 n)
 	}
 	else if (n >= rampUpFirstOutputSample && n <= rampUpLastOutputSample)
 	{
-		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
+		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0;
 		double multiplier = GetCurrentMultiplier(n, rampUpFirstOutputSample, rampUpLastOutputSample, startMultiplier, averageMultiplier, mode);
 		double distance = static_cast<double>(n - rampUpFirstOutputSample);
 		adjustedSample = rampUpFirstInputSample + static_cast<__int64>(std::round(distance * multiplier));
 	}
 	else // Ramp down
 	{
-		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
+		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0;
 		double multiplier = GetCurrentMultiplier(n, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, averageMultiplier, mode);
 		multiplier = (startMultiplier + averageMultiplier) - multiplier;
 		double distance = static_cast<double>(rampDownLastOutputSample - n);
-		adjustedSample = rampDownLastInputSample - static_cast<__int64>(std::floor(distance * multiplier));
+		adjustedSample = rampDownLastInputSample - static_cast<__int64>(std::round(distance * multiplier));
 	}
 
 	return adjustedSample;
@@ -276,7 +295,7 @@ __int64 CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputS
 
 	if (inFrames > 0)
 	{
-		// Don't forget to include the first frame!
+		// Don't forget to include the first sample!
 		inFrames++;
 	}
 
