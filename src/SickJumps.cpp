@@ -37,7 +37,7 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 	std::vector<SFLOAT> outputChunk;
 	for (__int64 i = 0; i < count * vi.AudioChannels(); ++i)
 	{
-		outputChunk.push_back((SFLOAT)1.0f);
+		outputChunk.push_back(1.0f);
 	}
 
 	for (__int64 i = 0; i < count; ++i)
@@ -56,7 +56,7 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 	}
 
 	__int64 bytesPerSample = vi.BytesFromAudioSamples(1);
-	memcpy((SFLOAT*)buf, outputChunk.data(), count * bytesPerSample);
+	memcpy(reinterpret_cast<SFLOAT*>(buf), outputChunk.data(), count * bytesPerSample);
 }
 
 
