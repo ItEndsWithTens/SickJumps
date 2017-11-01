@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstring>
 
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -72,8 +73,14 @@ PVideoFrame __stdcall SickJumps::GetFrame(int n, IScriptEnvironment* env)
 
 	if (setScriptVariable)
 	{
-		env->SetVar(scriptVariable.c_str(), AVSValue(multiplier));
-		env->SetVar("section", env->SaveString(text.c_str()));
+		std::ostringstream ss;
+		
+		ss
+			<< "frame:" << adjustedFrame
+			<< ":multiplier:" << std::fixed << std::setprecision(std::numeric_limits<double>::max_digits10) << multiplier
+			<< ":section:" << text;
+		
+		env->SetVar(scriptVariable.c_str(), env->SaveString(ss.str().c_str()));
 	}
 
 	return child->GetFrame(adjustedFrame, env);
