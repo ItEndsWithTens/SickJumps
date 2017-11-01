@@ -21,6 +21,15 @@ public:
 	double startMultiplier;
 	double fullMultiplier;
 
+	// The highest multiplier during ramps needs to be the average of the range,
+	// or clips will speed up too far; like walking while on a moving sidewalk.
+	double averageMultiplier;
+
+	// To avoid unsightly seams, the top of the down ramp is snapped relative to
+	// the first ramp's end. This necessitates a distinct, adjusted multiplier for
+	// the down ramp to ensure the proper frames are chosen.
+	double downAverageMultiplier;
+
 	__int64 audioSamplesPerFrame;
 
 	int originalFrameCount;

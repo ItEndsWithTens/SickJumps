@@ -11,13 +11,14 @@ SickJumpsCore::SickJumpsCore()
 
 
 SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, double _fps,
-	double _upSeconds, double _downSeconds,	double _startMultiplier, double _fullMultiplier,
+	double _upSeconds, double _downSeconds, double _startMultiplier, double _fullMultiplier,
 	__int64 _audioSamplesPerFrame, int _mode)
 	:
 	upSeconds(_upSeconds), downSeconds(_downSeconds),
 	startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
 	audioSamplesPerFrame(_audioSamplesPerFrame), mode(_mode),
-	originalFrameCount(_frameCount), originalSampleCount(_audioSamplesPerFrame * _frameCount)
+	originalFrameCount(_frameCount), originalSampleCount(_audioSamplesPerFrame * _frameCount),
+	averageMultiplier((startMultiplier + fullMultiplier) / 2.0), downAverageMultiplier(averageMultiplier)
 {
 	// -- Video -- //
 
@@ -42,7 +43,22 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	int fullDiffSnapped = static_cast<int>(std::round(fullDiff / fullMultiplier) * fullMultiplier);
 	fullSpeedLastInputFrame = fullSpeedFirstInputFrame + fullDiffSnapped;
 	rampDownFirstInputFrame = fullSpeedLastInputFrame + static_cast<int>(std::round(fullMultiplier));
-	
+
+	// At this point the last frame of the full speed section and the first frame
+	// of the down ramp have been snapped, but the number of output frames for the
+	// down ramp remains the same. To fit the new input frame count into the same
+	// output frame count, the down ramp needs its own multiplier tweaked as well.
+	int maxDownDistanceOutput = rampDownOutputFrames - 1;
+	int maxDownDistanceInput = static_cast<int>(std::round(maxDownDistanceOutput * downAverageMultiplier));
+
+	// HACK: A proper solution to this wouldn't need an if guarding it.
+	if (rampDownLastInputFrame - maxDownDistanceInput != rampDownFirstInputFrame)
+	{
+		int rampDownInputFrames = (rampDownLastInputFrame - rampDownFirstInputFrame) + 1;
+		double scaleFactor = static_cast<double>(rampDownInputFrames) / static_cast<double>(maxDownDistanceInput);
+		downAverageMultiplier *= scaleFactor;
+	}
+
 	// -- Output frames
 
 	rampUpFirstOutputFrame = static_cast<int>(std::round(rampUpFirstInputFrame / startMultiplier));
@@ -133,15 +149,13 @@ __int64 SickJumpsCore::GetAdjustedSampleNumber(__int64 n)
 	}
 	else if (n >= rampUpFirstOutputSample && n <= rampUpLastOutputSample)
 	{
-		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0;
 		double multiplier = GetCurrentMultiplier(n, rampUpFirstOutputSample, rampUpLastOutputSample, startMultiplier, averageMultiplier, mode);
 		double distance = static_cast<double>(n - rampUpFirstOutputSample);
 		adjustedSample = rampUpFirstInputSample + static_cast<__int64>(std::round(distance * multiplier));
 	}
 	else // Ramp down
 	{
-		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0;
-		double multiplier = GetCurrentMultiplier(n, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, averageMultiplier, mode);
+		double multiplier = GetCurrentMultiplier(n, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, downAverageMultiplier, mode);
 		multiplier = (startMultiplier + averageMultiplier) - multiplier;
 		double distance = static_cast<double>(rampDownLastOutputSample - n);
 		adjustedSample = rampDownLastInputSample - static_cast<__int64>(std::round(distance * multiplier));
@@ -180,9 +194,7 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 	}
 	else if (n >= rampUpFirstOutputFrame && n <= rampUpLastOutputFrame)
 	{
-		// The highest multiplier during ramps needs to be the average of the range,
-		// or clips will speed up too far; like walking while on a moving sidewalk.
-		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
+		
 		int distance = n - rampUpFirstOutputFrame;
 		multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, averageMultiplier, mode);
 		adjustedFrame = rampUpFirstInputFrame + static_cast<int>(std::round(distance * multiplier));
@@ -192,10 +204,11 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 	}
 	else // Ramp down
 	{
-		double averageMultiplier = (startMultiplier + fullMultiplier) / 2.0f;
-		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, averageMultiplier, mode);
-		multiplier = (startMultiplier + averageMultiplier) - multiplier;
+		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, downAverageMultiplier, mode);
+		multiplier = (startMultiplier + downAverageMultiplier) - multiplier;
+
 		int distance = rampDownLastOutputFrame - n;
+
 		adjustedFrame = rampDownLastInputFrame - static_cast<int>(std::round(distance * multiplier));
 
 		// Now get the friendly display version of the multiplier.
