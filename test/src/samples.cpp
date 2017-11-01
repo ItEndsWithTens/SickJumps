@@ -33,7 +33,7 @@ TEST_CASE("Ramps start and end on proper input samples with a full multiplier of
 	CHECK(c.rampDownFirstInputSample == 71568804);
 	CHECK(c.rampDownLastInputSample == 72000799);
 	CHECK(c.afterFirstInputSample == 72000800);
-	
+
 	CHECK(c.rampUpFirstOutputSample == 8000000);
 	CHECK(c.rampUpLastOutputSample == 8095999);
 	CHECK(c.fullSpeedFirstOutputSample == 8096000);

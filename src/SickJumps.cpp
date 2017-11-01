@@ -15,7 +15,8 @@ SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _star
 	SFLOAT _upSeconds, SFLOAT _downSeconds, int _mode, std::string _scriptVariable, IScriptEnvironment * env)
 	:
 	GenericVideoFilter(_child), startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
-	upSeconds(_upSeconds), downSeconds(_downSeconds), mode(_mode), scriptVariable(_scriptVariable), setScriptVariable(_scriptVariable != "" ? true : false)
+	upSeconds(_upSeconds), downSeconds(_downSeconds), mode(_mode), scriptVariable(_scriptVariable),
+	setScriptVariable(_scriptVariable != "" ? true : false)
 {
 	core = SickJumpsCore(vi.num_frames, _firstFrame, _lastFrame, vi.fps_numerator / vi.fps_denominator,
 		_upSeconds, _downSeconds, _startMultiplier, _fullMultiplier, vi.AudioSamplesFromFrames(1), _mode);

@@ -16,8 +16,8 @@ public:
 	int mode;
 
 	double upSeconds;
-	double downSeconds; 
-	
+	double downSeconds;
+
 	double startMultiplier;
 	double fullMultiplier;
 
