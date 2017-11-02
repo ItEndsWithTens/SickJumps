@@ -12,11 +12,11 @@ SickJumpsCore::SickJumpsCore()
 
 SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, double _fps,
 	double _upSeconds, double _downSeconds, double _startMultiplier, double _fullMultiplier,
-	__int64 _audioSamplesPerFrame, int _mode)
+	__int64 _audioSamplesPerFrame)
 	:
 	upSeconds(_upSeconds), downSeconds(_downSeconds),
 	startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
-	audioSamplesPerFrame(_audioSamplesPerFrame), mode(_mode),
+	audioSamplesPerFrame(_audioSamplesPerFrame),
 	originalFrameCount(_frameCount), originalSampleCount(_audioSamplesPerFrame * _frameCount),
 	averageMultiplier((startMultiplier + fullMultiplier) / 2.0), downAverageMultiplier(averageMultiplier)
 {
@@ -29,8 +29,8 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 
 	// -- Input frames
 
-	int rampUpInputFrames = CalculateRampInputFrames(0, rampUpOutputFrames, startMultiplier, fullMultiplier, mode);
-	int rampDownInputFrames = CalculateRampInputFrames(0, rampDownOutputFrames, startMultiplier, fullMultiplier, mode);
+	int rampUpInputFrames = CalculateRampInputFrames(0, rampUpOutputFrames, startMultiplier, fullMultiplier);
+	int rampDownInputFrames = CalculateRampInputFrames(0, rampDownOutputFrames, startMultiplier, fullMultiplier);
 
 	// Establish preliminary locations.
 	rampUpFirstInputFrame = _firstFrame;
@@ -91,9 +91,9 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	// -- Input samples
 
 	rampUpFirstInputSample = _audioSamplesPerFrame * rampUpFirstInputFrame;
-	rampUpLastInputSample = (rampUpFirstInputSample + CalculateRampInputSamples(0, rampUpOutputSamples, startMultiplier, fullMultiplier, mode)) - 1;
+	rampUpLastInputSample = (rampUpFirstInputSample + CalculateRampInputSamples(0, rampUpOutputSamples, startMultiplier, fullMultiplier)) - 1;
 	rampDownLastInputSample = (_audioSamplesPerFrame * (rampDownLastInputFrame + 1)) - 1;
-	rampDownFirstInputSample = (rampDownLastInputSample - CalculateRampInputSamples(0, rampDownOutputSamples, startMultiplier, fullMultiplier, mode)) + 1;
+	rampDownFirstInputSample = (rampDownLastInputSample - CalculateRampInputSamples(0, rampDownOutputSamples, startMultiplier, fullMultiplier)) + 1;
 	fullSpeedFirstInputSample = rampUpLastInputSample + static_cast<__int64>(std::round(fullMultiplier));
 	fullSpeedLastInputSample = rampDownFirstInputSample - static_cast<__int64>(std::round(fullMultiplier));
 	afterFirstInputSample = rampDownLastInputSample + static_cast<__int64>(std::round(startMultiplier));
@@ -152,13 +152,13 @@ __int64 SickJumpsCore::GetAdjustedSampleNumber(__int64 n)
 	}
 	else if (n >= rampUpFirstOutputSample && n <= rampUpLastOutputSample)
 	{
-		double multiplier = GetCurrentMultiplier(n, rampUpFirstOutputSample, rampUpLastOutputSample, startMultiplier, averageMultiplier, mode);
+		double multiplier = GetCurrentMultiplier(n, rampUpFirstOutputSample, rampUpLastOutputSample, startMultiplier, averageMultiplier);
 		double distance = static_cast<double>(n - rampUpFirstOutputSample);
 		adjustedSample = rampUpFirstInputSample + static_cast<__int64>(std::round(distance * multiplier));
 	}
 	else // Ramp down
 	{
-		double multiplier = GetCurrentMultiplier(n, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, downAverageMultiplier, mode);
+		double multiplier = GetCurrentMultiplier(n, rampDownFirstOutputSample, rampDownLastOutputSample, startMultiplier, downAverageMultiplier);
 		multiplier = (startMultiplier + averageMultiplier) - multiplier;
 		double distance = static_cast<double>(rampDownLastOutputSample - n);
 		adjustedSample = rampDownLastInputSample - static_cast<__int64>(std::round(distance * multiplier));
@@ -199,15 +199,15 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 	{
 
 		int distance = n - rampUpFirstOutputFrame;
-		multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, averageMultiplier, mode);
+		multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, averageMultiplier);
 		adjustedFrame = rampUpFirstInputFrame + static_cast<int>(std::round(distance * multiplier));
 
-		multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, fullMultiplier, mode);
+		multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, fullMultiplier);
 		text = "ramp up";
 	}
 	else // Ramp down
 	{
-		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, downAverageMultiplier, mode);
+		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, downAverageMultiplier);
 		multiplier = (startMultiplier + downAverageMultiplier) - multiplier;
 
 		int distance = rampDownLastOutputFrame - n;
@@ -215,7 +215,7 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 		adjustedFrame = rampDownLastInputFrame - static_cast<int>(std::round(distance * multiplier));
 
 		// Now get the friendly display version of the multiplier.
-		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, fullMultiplier, mode);
+		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, fullMultiplier);
 		multiplier = (startMultiplier + fullMultiplier) - multiplier;
 		text = "ramp down";
 	}
@@ -225,7 +225,7 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 
 
 
-double GetCurrentMultiplier(__int64 current, __int64 first, __int64 last, double startMultiplier, double fullMultiplier, int mode)
+double GetCurrentMultiplier(__int64 current, __int64 first, __int64 last, double startMultiplier, double fullMultiplier)
 {
 	double multiplier;
 
@@ -273,7 +273,7 @@ double ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, 
 
 
 // Calculate the number of input frames required for a speed ramp.
-int CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier, int mode)
+int CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier)
 {
 	int inFrames = 0;
 
@@ -281,7 +281,7 @@ int CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double 
 
 	for (int i = 0; i < totalOutputFrames; ++i)
 	{
-		double step = GetCurrentMultiplier(i, 0, totalOutputFrames - 1, startMultiplier, averageMultiplier, mode);
+		double step = GetCurrentMultiplier(i, 0, totalOutputFrames - 1, startMultiplier, averageMultiplier);
 		inFrames = static_cast<int>(std::round(step * i));
 	}
 
@@ -297,7 +297,7 @@ int CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double 
 
 
 // Calculate the number of input samples required for a speed ramp.
-__int64 CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier, int mode)
+__int64 CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier)
 {
 	__int64 inFrames = 0;
 
@@ -305,7 +305,7 @@ __int64 CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputS
 
 	for (__int64 i = 0; i < totalOutputSamples; ++i)
 	{
-		double step = GetCurrentMultiplier(i, 0, totalOutputSamples - 1, startMultiplier, averageMultiplier, mode);
+		double step = GetCurrentMultiplier(i, 0, totalOutputSamples - 1, startMultiplier, averageMultiplier);
 		inFrames = static_cast<__int64>(std::round(step * static_cast<double>(i)));
 	}
 

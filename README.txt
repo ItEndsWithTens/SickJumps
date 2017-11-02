@@ -12,7 +12,7 @@
 
     SickJumps(clip c, int "first_frame", int "last_frame",
               float "start_multiplier", float full_multiplier",
-              float "up_seconds", float "down_seconds", string "mode",
+              float "up_seconds", float "down_seconds",
               string "script_variable")
 
     c  clip
@@ -39,10 +39,6 @@
     down_seconds  float, default c length / 4.0
 
       The resulting duration, in seconds, of the ramp up and ramp down.
-
-    mode  string, default "linear"
-
-      The interpolation mode to use for speed ramping, "linear" or "spline".
 
     script_variable  string
 

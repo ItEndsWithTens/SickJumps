@@ -13,14 +13,14 @@
 
 
 SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _startMultiplier, SFLOAT _fullMultiplier,
-	SFLOAT _upSeconds, SFLOAT _downSeconds, int _mode, std::string _scriptVariable, IScriptEnvironment * env)
+	SFLOAT _upSeconds, SFLOAT _downSeconds, std::string _scriptVariable, IScriptEnvironment * env)
 	:
 	GenericVideoFilter(_child), startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
-	upSeconds(_upSeconds), downSeconds(_downSeconds), mode(_mode), scriptVariable(_scriptVariable),
+	upSeconds(_upSeconds), downSeconds(_downSeconds), scriptVariable(_scriptVariable),
 	setScriptVariable(_scriptVariable != "" ? true : false)
 {
 	core = SickJumpsCore(vi.num_frames, _firstFrame, _lastFrame, vi.fps_numerator / vi.fps_denominator,
-		_upSeconds, _downSeconds, _startMultiplier, _fullMultiplier, vi.AudioSamplesFromFrames(1), _mode);
+		_upSeconds, _downSeconds, _startMultiplier, _fullMultiplier, vi.AudioSamplesFromFrames(1));
 
 	vi.num_frames = core.adjustedFrameCount;
 	vi.num_audio_samples = core.adjustedSampleCount;

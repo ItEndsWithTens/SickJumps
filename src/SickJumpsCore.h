@@ -7,13 +7,11 @@ public:
 	SickJumpsCore();
 	SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, double _fps,
 		double _upSeconds, double _downSeconds, double _startMultiplier, double _endMultiplier,
-		__int64 _audioSamplesPerFrame, int _mode);
+		__int64 _audioSamplesPerFrame);
 	~SickJumpsCore();
 
 	__int64 GetAdjustedSampleNumber(__int64 n);
 	std::tuple<int, double, std::string> GetAdjustedFrameProperties(int n);
-
-	int mode;
 
 	double upSeconds;
 	double downSeconds;
@@ -73,7 +71,7 @@ public:
 	__int64 afterFirstInputSample;
 };
 
-int __declspec(dllexport) CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier, int mode);
-__int64 __declspec(dllexport) CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier, int mode);
-double __declspec(dllexport) GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, double startMultiplier, double fullMultiplier, int mode);
+int __declspec(dllexport) CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier);
+__int64 __declspec(dllexport) CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier);
+double __declspec(dllexport) GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, double startMultiplier, double fullMultiplier);
 double __declspec(dllexport) ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, double outMax);

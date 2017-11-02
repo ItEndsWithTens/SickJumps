@@ -15,19 +15,19 @@ extern IScriptEnvironment* env;
 
 TEST_CASE("Ramp input frame count matches output frame count when multipliers are both 1.0")
 {
-	CHECK(CalculateRampInputFrames(0, 0, 1.0, 1.0, SickJumps::MODE_LINEAR) == 0);
-	CHECK(CalculateRampInputFrames(0, 10, 1.0, 1.0, SickJumps::MODE_LINEAR) == 10);
-	CHECK(CalculateRampInputFrames(0, 100, 1.0, 1.0, SickJumps::MODE_LINEAR) == 100);
-	CHECK(CalculateRampInputFrames(0, 1000, 1.0, 1.0, SickJumps::MODE_LINEAR) == 1000);
+	CHECK(CalculateRampInputFrames(0, 0, 1.0, 1.0) == 0);
+	CHECK(CalculateRampInputFrames(0, 10, 1.0, 1.0) == 10);
+	CHECK(CalculateRampInputFrames(0, 100, 1.0, 1.0) == 100);
+	CHECK(CalculateRampInputFrames(0, 1000, 1.0, 1.0) == 1000);
 
-	CHECK(CalculateRampInputFrames(0, 667, 1.0, 1.0, SickJumps::MODE_LINEAR) == 667);
-	CHECK(CalculateRampInputFrames(0, 5353, 1.0, 1.0, SickJumps::MODE_LINEAR) == 5353);
-	CHECK(CalculateRampInputFrames(0, 9999, 1.0, 1.0, SickJumps::MODE_LINEAR) == 9999);
+	CHECK(CalculateRampInputFrames(0, 667, 1.0, 1.0) == 667);
+	CHECK(CalculateRampInputFrames(0, 5353, 1.0, 1.0) == 5353);
+	CHECK(CalculateRampInputFrames(0, 9999, 1.0, 1.0) == 9999);
 }
 
 TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 1.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 800, SickJumps::MODE_LINEAR);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 800);
 
 	CHECK(c.rampUpFirstInputFrame == 10000);
 	CHECK(c.rampUpLastInputFrame == 10119);
@@ -101,7 +101,7 @@ TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 
 
 TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 8.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 800, SickJumps::MODE_LINEAR);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 800);
 
 	CHECK(c.rampUpFirstOutputFrame == 10000);
 	CHECK(c.rampUpLastOutputFrame == 10119);
@@ -194,7 +194,7 @@ TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 
 
 TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 32.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 32.0, 800, SickJumps::MODE_LINEAR);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 32.0, 800);
 
 	CHECK(c.rampUpFirstOutputFrame == 10000);
 	CHECK(c.rampUpLastOutputFrame == 10119);

@@ -4,7 +4,7 @@
 
 TEST_CASE("Ramps start and end on proper input samples with a full multiplier of 1.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 800, SickJumps::MODE_LINEAR);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 800);
 
 	CHECK(c.rampUpFirstInputSample == 8000000);
 	CHECK(c.rampUpLastInputSample == 8095999);
@@ -24,7 +24,7 @@ TEST_CASE("Ramps start and end on proper input samples with a full multiplier of
 
 TEST_CASE("Ramps start and end on proper input samples with a full multiplier of 8.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 800, SickJumps::MODE_LINEAR);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 800);
 
 	CHECK(c.rampUpFirstInputSample == 8000000);
 	CHECK(c.rampUpLastInputSample == 8431996);
