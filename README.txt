@@ -20,7 +20,7 @@
 
     c  clip
 
-      The input clip.
+      The input clip; must have floating point audio (use ConvertAudioToFloat).
 
     first_frame  int, default 0
 
