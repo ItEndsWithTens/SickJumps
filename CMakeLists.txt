@@ -19,6 +19,10 @@ set(HOSTS "")
 if(WIN32)
   if(${CMAKE_GENERATOR} MATCHES "Win64")
     list(APPEND HOSTS "AvisynthPlus x64")
+    set(SICKJUMPS_HOST_ABBR "AVS+")
+  else()
+    list(APPEND HOSTS "Avisynth 2.6")
+    set(SICKJUMPS_HOST_ABBR "AVS")
 endif()
 
 list(SORT HOSTS)
@@ -61,8 +65,6 @@ string(TOUPPER ${SICKJUMPS_HOST} SICKJUMPS_HOST_DEFINE)
 string(REPLACE "." "" SICKJUMPS_HOST_DEFINE ${SICKJUMPS_HOST_DEFINE})
 string(REPLACE " " "_" SICKJUMPS_HOST_DEFINE ${SICKJUMPS_HOST_DEFINE})
 
-# When defined as SHARED, the plugin builds correctly in Windows and Linux, but
-# it is technically a MODULE, and that distinction is important in macOS.
 add_library(${PROJECT_NAME} SHARED ${SRCS})
 set_target_properties(
   ${PROJECT_NAME}
@@ -265,7 +267,6 @@ install(
 # Build the source package by changing to your build directory and
 # running: cpack --config CPackSourceConfig.cmake
 set(CPACK_SOURCE_GENERATOR "ZIP")
-set(SICKJUMPS_HOST_ABBR "AVS")
 
 if(WIN32)
   set(CPACK_GENERATOR "ZIP")

@@ -36,13 +36,14 @@ SickJumps::~SickJumps()
 
 void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env)
 {
-	std::vector<SFLOAT> outputChunk;
-	for (__int64 i = 0; i < count * vi.AudioChannels(); ++i)
-	{
-		outputChunk.push_back(1.0f);
-	}
+	// C++ arrays' [] operator takes a size_t argument, which means that although
+	// count is provided as an __int64, buf could never be indexed with values
+	// larger than an unsigned int on x86 systems.
+	size_t size = static_cast<size_t>(count);
 
-	for (__int64 i = 0; i < count; ++i)
+	std::vector<SFLOAT> outputChunk;
+
+	for (size_t i = 0; i < size; ++i)
 	{
 		std::vector<SFLOAT> sample;
 		for (int j = 0; j < vi.AudioChannels(); ++j)
@@ -54,11 +55,14 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 
 		child->GetAudio(sample.data(), static_cast<__int64>(adjustedSample), 1, env);
 
-		memcpy(outputChunk.data() + (i * vi.AudioChannels()), sample.data(), vi.BytesFromAudioSamples(1));
+		for (size_t k = 0; k < sample.size(); ++k)
+		{
+			outputChunk.push_back(sample[k]);
+		}
 	}
 
-	__int64 bytesPerSample = vi.BytesFromAudioSamples(1);
-	memcpy(reinterpret_cast<SFLOAT*>(buf), outputChunk.data(), count * bytesPerSample);
+	size_t bytes = vi.BytesPerAudioSample() * size;
+	std::memcpy(reinterpret_cast<SFLOAT*>(buf), outputChunk.data(), bytes);
 }
 
 

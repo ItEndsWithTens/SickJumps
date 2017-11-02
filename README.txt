@@ -1,8 +1,11 @@
 
-
   --SickJumps 0.1.0--
 
-      A speed ramping plugin for Avisynth+.
+      A speed ramping plugin for Avisynth.
+      
+      Requirements:
+        Avisynth 2.6 or greater, or Avisynth+
+        Microsoft's Visual C++ 2015 Redistributable
 
     robert.martens@gmail.com
     @ItEndsWithTens
