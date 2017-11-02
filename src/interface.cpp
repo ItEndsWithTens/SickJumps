@@ -32,8 +32,17 @@ AVSValue __cdecl Create_SickJumps(AVSValue args, void* user_data, IScriptEnviron
 
 	std::string scriptVariable = args[7].AsString("");
 
-  return new SickJumps(clip, firstFrame, lastFrame, startMultiplier, fullMultiplier, upSeconds, downSeconds, scriptVariable, env);
+	SickJumps* s;
+	try
+	{
+		s = new SickJumps(clip, firstFrame, lastFrame, startMultiplier, fullMultiplier, upSeconds, downSeconds, scriptVariable, env);
+	}
+	catch (std::invalid_argument& e)
+	{
+		env->ThrowError("SickJumps: %s", e.what());
+	}
 
+	return s;
 }
 
 

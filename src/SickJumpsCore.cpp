@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <sstream>
+
 
 
 SickJumpsCore::SickJumpsCore()
@@ -60,6 +62,18 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 		int rampDownInputFrames = (rampDownLastInputFrame - rampDownFirstInputFrame) + 1;
 		double scaleFactor = static_cast<double>(rampDownInputFrames) / static_cast<double>(maxDownDistanceInput);
 		downAverageMultiplier *= scaleFactor;
+	}
+
+	if (rampUpLastInputFrame >= rampDownFirstInputFrame)
+	{
+		std::ostringstream err;
+
+		err
+			<< "Ramps cannot overlap! For this clip, first_frame and last_frame must be at least "
+			<< rampUpInputFrames + 1 + rampDownInputFrames
+			<< " frames apart!";
+
+		throw std::invalid_argument(err.str());
 	}
 
 	// -- Output frames
