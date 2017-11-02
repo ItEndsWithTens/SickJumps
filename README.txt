@@ -42,6 +42,18 @@
 
     script_variable  string
 
-      A variable name to which the current multiplier for a frame should be
-      assigned. Intended for use with Avisynth's runtime environment. Be sure to
-      set ScriptClip's after_frame to true so the variable gets set properly.
+      Assigns a string, containing some debug info, to the specified variable
+      name. Said string is colon-delimited, and takes the following form:
+
+        "frame:X:multiplier:Y:section:Z"
+
+      Respectively, it provides the current input frame number, multiplier, and
+      a simple label describing what section ("before", "ramp up", "full speed",
+      "ramp down", or "after") the current output frame resides in.
+
+      The string is updated each frame, and is intended for use with Avisynth's
+      runtime environment. Be sure to set ScriptClip's after_frame to true so
+      the variable gets set properly.
+
+      See the source distribution for an example script that demonstrates one
+      approach to parsing the string and using some of its information.
