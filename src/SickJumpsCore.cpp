@@ -57,13 +57,9 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	// output frame count, the down ramp needs its own multiplier tweaked as well.
 	int downDistanceOutput = rampDownOutputFrames - 1;
 	int calculatedDownDistanceInput = static_cast<int>(std::round(downDistanceOutput * downAverageVideoMultiplier));
-
 	double originalDownAverageMultiplier = downAverageVideoMultiplier;
-	if (rampDownLastInputFrame - calculatedDownDistanceInput != rampDownFirstInputFrame)
-	{
-		int expectedDownDistanceInput = rampDownLastInputFrame - rampDownFirstInputFrame;
-		downAverageVideoMultiplier = static_cast<double>(expectedDownDistanceInput) / static_cast<double>(downDistanceOutput);
-	}
+	int expectedDownDistanceInputFrames = rampDownLastInputFrame - rampDownFirstInputFrame;
+	downAverageVideoMultiplier = static_cast<double>(expectedDownDistanceInputFrames) / static_cast<double>(downDistanceOutput);
 
 	if (rampUpLastInputFrame >= rampDownFirstInputFrame)
 	{
@@ -123,11 +119,8 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 
 	__int64 downDistanceOutputSamples = rampDownOutputSamples - 1;
 	__int64 calculatedDownDistanceInputSamples = static_cast<int>(std::round(downDistanceOutputSamples * originalDownAverageMultiplier));
-	if (rampDownLastInputSample - calculatedDownDistanceInputSamples != rampDownFirstInputSample)
-	{
-		__int64 expectedDownDistanceInputSamples = rampDownLastInputSample - rampDownFirstInputSample;
-		downAverageAudioMultiplier = static_cast<double>(expectedDownDistanceInputSamples) / static_cast<double>(downDistanceOutputSamples);
-	}
+	__int64 expectedDownDistanceInputSamples = rampDownLastInputSample - rampDownFirstInputSample;
+	downAverageAudioMultiplier = static_cast<double>(expectedDownDistanceInputSamples) / static_cast<double>(downDistanceOutputSamples);
 
 	// -- Output samples
 
