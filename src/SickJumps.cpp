@@ -94,11 +94,7 @@ int __stdcall SickJumps::SetCacheHints(int cachehints, int frame_range)
 {
 	int hints = 0;
 
-	if (cachehints == CACHE_GET_MTMODE)
-	{
-		hints = MT_NICE_FILTER;
-	}
-	else
+	if (cachehints == CACHE_GETCHILD_ACCESS_COST)
 	{
 		if (setScriptVariable)
 		{
@@ -108,6 +104,26 @@ int __stdcall SickJumps::SetCacheHints(int cachehints, int frame_range)
 		{
 			hints = CACHE_ACCESS_RAND;
 		}
+	}
+	else if (cachehints == CACHE_GETCHILD_AUDIO_MODE)
+	{
+		hints = CACHE_AUDIO;
+	}
+	else if (cachehints == CACHE_GETCHILD_COST)
+	{
+		hints = CACHE_COST_LOW;
+	}
+	else if (cachehints == CACHE_GETCHILD_THREAD_MODE)
+	{
+		hints = CACHE_THREAD_SAFE;
+	}
+	else if (cachehints == CACHE_GET_MTMODE)
+	{
+		hints = MT_NICE_FILTER;
+	}
+	else
+	{
+		hints = CACHE_GENERIC;
 	}
 
 	return hints;

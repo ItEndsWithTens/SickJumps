@@ -35,7 +35,15 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	env = makeEnv(AVISYNTH_INTERFACE_VERSION);
+	try
+	{
+		env = makeEnv(AVISYNTH_INTERFACE_VERSION);
+	}
+	catch (AvisynthError& e)
+	{
+		std::cerr << "Avisynth error: " << e.msg;
+		return -1;
+	}
 	if (!env)
 	{
 		std::cerr << "Couldn't create script environment!" << std::endl;
