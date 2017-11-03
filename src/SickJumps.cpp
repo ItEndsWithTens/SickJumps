@@ -78,12 +78,12 @@ PVideoFrame __stdcall SickJumps::GetFrame(int n, IScriptEnvironment* env)
 	if (setScriptVariable)
 	{
 		std::ostringstream ss;
-		
+
 		ss
 			<< "frame:" << adjustedFrame
 			<< ":multiplier:" << std::fixed << std::setprecision(std::numeric_limits<double>::max_digits10) << multiplier
 			<< ":section:" << text;
-		
+
 		env->SetVar(scriptVariable.c_str(), env->SaveString(ss.str().c_str()));
 	}
 

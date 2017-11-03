@@ -9,7 +9,7 @@
 
 AVSValue __cdecl Create_SickJumps(AVSValue args, void* user_data, IScriptEnvironment* env)
 {
-  PClip clip = args[0].AsClip();
+	PClip clip = args[0].AsClip();
 
 	VideoInfo vi = clip->GetVideoInfo();
 
@@ -51,10 +51,10 @@ const AVS_Linkage* AVS_linkage = 0;
 extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit3(IScriptEnvironment* env, const AVS_Linkage* const vectors)
 {
 
-  AVS_linkage = vectors;
+	AVS_linkage = vectors;
 
-  env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[up_seconds]f[down_seconds]f[script_variable]s", Create_SickJumps, 0);
+	env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[up_seconds]f[down_seconds]f[script_variable]s", Create_SickJumps, 0);
 
-  return "`SickJumps' - Speed ramping effect";
+	return "`SickJumps' - Speed ramping effect";
 
 }

@@ -133,6 +133,7 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	__int64 totalOutputSamplesBefore = rampUpFirstOutputSample;
 	__int64 totalOutputSamplesDuring = rampUpOutputSamples + fullSpeedTotalOutputSamples + rampDownOutputSamples;
 	__int64 totalOutputSamplesAfter = static_cast<__int64>(std::floor((originalSampleCount - 1 - rampDownLastInputSample) / startMultiplier));
+
 	adjustedSampleCount = totalOutputSamplesBefore + totalOutputSamplesDuring + totalOutputSamplesAfter;
 }
 
@@ -211,9 +212,8 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 	}
 	else if (n >= rampUpFirstOutputFrame && n <= rampUpLastOutputFrame)
 	{
-
-		int distance = n - rampUpFirstOutputFrame;
 		multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, averageMultiplier);
+		int distance = n - rampUpFirstOutputFrame;
 		adjustedFrame = rampUpFirstInputFrame + static_cast<int>(std::round(distance * multiplier));
 
 		multiplier = GetCurrentMultiplier(n, rampUpFirstOutputFrame, rampUpLastOutputFrame, startMultiplier, fullMultiplier);
@@ -223,9 +223,7 @@ std::tuple<int, double, std::string> SickJumpsCore::GetAdjustedFrameProperties(i
 	{
 		multiplier = GetCurrentMultiplier(n, rampDownFirstOutputFrame, rampDownLastOutputFrame, startMultiplier, downAverageMultiplier);
 		multiplier = (startMultiplier + downAverageMultiplier) - multiplier;
-
 		int distance = rampDownLastOutputFrame - n;
-
 		adjustedFrame = rampDownLastInputFrame - static_cast<int>(std::round(distance * multiplier));
 
 		// Now get the friendly display version of the multiplier.
