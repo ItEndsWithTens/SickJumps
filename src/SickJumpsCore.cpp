@@ -31,8 +31,8 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 
 	// -- Input frames
 
-	int rampUpInputFrames = CalculateRampInputFrames(0, rampUpOutputFrames, startMultiplier, fullMultiplier);
-	int rampDownInputFrames = CalculateRampInputFrames(0, rampDownOutputFrames, startMultiplier, fullMultiplier);
+	int rampUpInputFrames = static_cast<int>(CalculateRampInputCount(0, rampUpOutputFrames, startMultiplier, fullMultiplier));
+	int rampDownInputFrames = static_cast<int>(CalculateRampInputCount(0, rampDownOutputFrames, startMultiplier, fullMultiplier));
 
 	// Establish preliminary locations.
 	rampUpFirstInputFrame = _firstFrame;
@@ -104,10 +104,13 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 
 	// -- Input samples
 
+	__int64 rampUpInputSamples = CalculateRampInputCount(0, rampUpOutputSamples, startMultiplier, fullMultiplier);
+	__int64 rampDownInputSamples = CalculateRampInputCount(0, rampDownOutputSamples, startMultiplier, fullMultiplier);
+
 	rampUpFirstInputSample = _audioSamplesPerFrame * rampUpFirstInputFrame;
-	rampUpLastInputSample = (rampUpFirstInputSample + CalculateRampInputSamples(0, rampUpOutputSamples, startMultiplier, fullMultiplier)) - 1;
+	rampUpLastInputSample = (rampUpFirstInputSample + rampUpInputSamples) - 1;
 	rampDownLastInputSample = (_audioSamplesPerFrame * (rampDownLastInputFrame + 1)) - 1;
-	rampDownFirstInputSample = (rampDownLastInputSample - CalculateRampInputSamples(0, rampDownOutputSamples, startMultiplier, fullMultiplier)) + 1;
+	rampDownFirstInputSample = (rampDownLastInputSample - rampDownInputSamples) + 1;
 	fullSpeedFirstInputSample = rampUpLastInputSample + static_cast<__int64>(std::round(fullMultiplier));
 	fullSpeedLastInputSample = rampDownFirstInputSample - static_cast<__int64>(std::round(fullMultiplier));
 	afterFirstInputSample = rampDownLastInputSample + static_cast<__int64>(std::round(startMultiplier));
@@ -284,48 +287,24 @@ double ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, 
 
 
 
-// Calculate the number of input frames required for a speed ramp.
-int CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier)
+// Calculate the number of input frames, or samples, required for a speed ramp.
+__int64 CalculateRampInputCount(__int64 first, __int64 total, double startMultiplier, double endMultiplier)
 {
-	int inFrames = 0;
+	__int64 inCount = 0;
 
 	double averageMultiplier = (startMultiplier + endMultiplier) / 2.0;
 
-	for (int i = 0; i < totalOutputFrames; ++i)
+	for (__int64 i = 0; i < total; ++i)
 	{
-		double step = GetCurrentMultiplier(i, 0, totalOutputFrames - 1, startMultiplier, averageMultiplier);
-		inFrames = static_cast<int>(std::round(step * i));
+		double step = GetCurrentMultiplier(i, 0, total - 1, startMultiplier, averageMultiplier);
+		inCount = static_cast<__int64>(std::round(step * static_cast<double>(i)));
 	}
 
-	if (inFrames > 0)
+	if (inCount > 0)
 	{
-		// Don't forget to include the first frame!
-		inFrames++;
+		// Don't forget to include the first one!
+		inCount++;
 	}
 
-	return inFrames;
-}
-
-
-
-// Calculate the number of input samples required for a speed ramp.
-__int64 CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier)
-{
-	__int64 inFrames = 0;
-
-	double averageMultiplier = (startMultiplier + endMultiplier) / 2.0;
-
-	for (__int64 i = 0; i < totalOutputSamples; ++i)
-	{
-		double step = GetCurrentMultiplier(i, 0, totalOutputSamples - 1, startMultiplier, averageMultiplier);
-		inFrames = static_cast<__int64>(std::round(step * static_cast<double>(i)));
-	}
-
-	if (inFrames > 0)
-	{
-		// Don't forget to include the first sample!
-		inFrames++;
-	}
-
-	return inFrames;
+	return inCount;
 }

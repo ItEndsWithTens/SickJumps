@@ -1,6 +1,8 @@
 #include <string>
 #include <tuple>
 
+
+
 class __declspec(dllexport) SickJumpsCore
 {
 public:
@@ -71,7 +73,8 @@ public:
 	__int64 afterFirstInputSample;
 };
 
-int __declspec(dllexport) CalculateRampInputFrames(int firstInputFrame, int totalOutputFrames, double startMultiplier, double endMultiplier);
-__int64 __declspec(dllexport) CalculateRampInputSamples(__int64 firstInputSample, __int64 totalOutputSamples, double startMultiplier, double endMultiplier);
+
+
+__int64 __declspec(dllexport) CalculateRampInputCount(__int64 first, __int64 total, double startMultiplier, double endMultiplier);
 double __declspec(dllexport) GetCurrentMultiplier(__int64 n, __int64 first, __int64 last, double startMultiplier, double fullMultiplier);
 double __declspec(dllexport) ScaleToRange(__int64 value, __int64 inMin, __int64 inMax, double outMin, double outMax);

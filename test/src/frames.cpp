@@ -15,14 +15,14 @@ extern IScriptEnvironment* env;
 
 TEST_CASE("Ramp input frame count matches output frame count when multipliers are both 1.0")
 {
-	CHECK(CalculateRampInputFrames(0, 0, 1.0, 1.0) == 0);
-	CHECK(CalculateRampInputFrames(0, 10, 1.0, 1.0) == 10);
-	CHECK(CalculateRampInputFrames(0, 100, 1.0, 1.0) == 100);
-	CHECK(CalculateRampInputFrames(0, 1000, 1.0, 1.0) == 1000);
+	CHECK(CalculateRampInputCount(0, 0, 1.0, 1.0) == 0);
+	CHECK(CalculateRampInputCount(0, 10, 1.0, 1.0) == 10);
+	CHECK(CalculateRampInputCount(0, 100, 1.0, 1.0) == 100);
+	CHECK(CalculateRampInputCount(0, 1000, 1.0, 1.0) == 1000);
 
-	CHECK(CalculateRampInputFrames(0, 667, 1.0, 1.0) == 667);
-	CHECK(CalculateRampInputFrames(0, 5353, 1.0, 1.0) == 5353);
-	CHECK(CalculateRampInputFrames(0, 9999, 1.0, 1.0) == 9999);
+	CHECK(CalculateRampInputCount(0, 667, 1.0, 1.0) == 667);
+	CHECK(CalculateRampInputCount(0, 5353, 1.0, 1.0) == 5353);
+	CHECK(CalculateRampInputCount(0, 9999, 1.0, 1.0) == 9999);
 }
 
 TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 1.0")
