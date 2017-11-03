@@ -121,10 +121,6 @@ int __stdcall SickJumps::SetCacheHints(int cachehints, int frame_range)
 	{
 		hints = MT_NICE_FILTER;
 	}
-	else
-	{
-		hints = CACHE_GENERIC;
-	}
 
 	return hints;
 }
