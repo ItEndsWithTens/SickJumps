@@ -8,7 +8,7 @@ class __declspec(dllexport) SickJumpsCore
 public:
 	SickJumpsCore();
 	SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, double _fps,
-		double _upSeconds, double _downSeconds, double _startMultiplier, double _endMultiplier,
+		double _upSeconds, double _downSeconds, double _startMultiplier, double _fullMultiplier, double _endMultiplier,
 		__int64 _audioSamplesPerFrame);
 	~SickJumpsCore();
 
@@ -20,6 +20,7 @@ public:
 
 	double startMultiplier;
 	double fullMultiplier;
+	double endMultiplier;
 
 	// The highest multiplier during ramps needs to be the average of the range,
 	// or clips will speed up too far; like walking while on a moving sidewalk.
@@ -27,8 +28,10 @@ public:
 
 	// To avoid unsightly seams, the top of the down ramp is snapped relative to
 	// the first ramp's end. This necessitates a distinct, adjusted multiplier for
-	// the down ramp to ensure the proper frames are chosen.
-	double downAverageMultiplier;
+	// the down ramp to ensure the proper frames are chosen. This adjustment of the
+	// video multiplier is too coarse for use with audio samples, however.
+	double downAverageVideoMultiplier;
+	double downAverageAudioMultiplier;
 
 	__int64 audioSamplesPerFrame;
 

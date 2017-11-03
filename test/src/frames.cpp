@@ -27,7 +27,7 @@ TEST_CASE("Ramp input frame count matches output frame count when multipliers ar
 
 TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 1.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 800);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 1.0, 800);
 
 	CHECK(c.rampUpFirstInputFrame == 10000);
 	CHECK(c.rampUpLastInputFrame == 10119);
@@ -99,9 +99,103 @@ TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 
 	CHECK(text == "after");
 }
 
+TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 4.0")
+{
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 4.0, 1.0, 800);
+
+	CHECK(c.rampUpFirstOutputFrame == 10000);
+	CHECK(c.rampUpLastOutputFrame == 10119);
+	CHECK(c.fullSpeedFirstOutputFrame == 10120);
+	CHECK(c.fullSpeedLastOutputFrame == 29969);
+	CHECK(c.rampDownFirstOutputFrame == 29970);
+	//CHECK(c.rampDownLastOutputFrame == );
+
+	CHECK(c.rampUpFirstInputFrame == 10000);
+	CHECK(c.rampUpLastInputFrame == 10298);
+	CHECK(c.fullSpeedFirstInputFrame == 10302);
+	CHECK(c.fullSpeedLastInputFrame == 89698);
+	CHECK(c.rampDownFirstInputFrame == 89702);
+	CHECK(c.rampDownLastInputFrame == 90000);
+
+	int adjustedFrame;
+	double multiplier;
+	std::string text;
+
+	// Before
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(0);
+	CHECK(adjustedFrame == 0);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "before");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(9999);
+	CHECK(adjustedFrame == 9999);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "before");
+
+	// Ramp up
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10000);
+	CHECK(adjustedFrame == 10000);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "ramp up");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10001);
+	CHECK(adjustedFrame == 10001);
+	CHECK(text == "ramp up");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10118);
+	CHECK(adjustedFrame == 10294);
+	CHECK(text == "ramp up");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10119);
+	CHECK(adjustedFrame == 10298);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "ramp up");
+
+	// Full speed
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10120);
+	CHECK(adjustedFrame == 10302);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "full speed");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(29969);
+	CHECK(adjustedFrame == 89698);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "full speed");
+
+	// Ramp down
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(29970);
+	CHECK(adjustedFrame == 89702);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "ramp down");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(29971);
+	CHECK(adjustedFrame == 89706);
+	CHECK(text == "ramp down");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(30088);
+	CHECK(adjustedFrame == 89999);
+	CHECK(text == "ramp down");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(30089);
+	CHECK(adjustedFrame == 90000);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "ramp down");
+
+	// After
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(30090);
+	CHECK(adjustedFrame == 90001);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "after");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(40088);
+	CHECK(adjustedFrame == 99999);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "after");
+}
+
 TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 8.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 800);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 1.0, 800);
 
 	CHECK(c.rampUpFirstOutputFrame == 10000);
 	CHECK(c.rampUpLastOutputFrame == 10119);
@@ -194,7 +288,7 @@ TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 
 
 TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 32.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 32.0, 800);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 32.0, 1.0, 800);
 
 	CHECK(c.rampUpFirstOutputFrame == 10000);
 	CHECK(c.rampUpLastOutputFrame == 10119);
@@ -282,5 +376,77 @@ TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 
 	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(22614);
 	CHECK(adjustedFrame == 99999);
 	CHECK(multiplier == 1.0);
+	CHECK(text == "after");
+}
+
+TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 4.0 "
+					"and an end multiplier of 2.0")
+{
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 4.0, 2.0, 800);
+
+	CHECK(c.rampUpFirstInputFrame == 10000);
+	CHECK(c.rampUpLastInputFrame == 10298);
+	CHECK(c.fullSpeedFirstInputFrame == 10302);
+	CHECK(c.fullSpeedLastInputFrame == 89638);
+	CHECK(c.rampDownFirstInputFrame == 89642);
+	CHECK(c.rampDownLastInputFrame == 90000);
+
+	int adjustedFrame;
+	double multiplier;
+	std::string text;
+
+	// Before
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(0);
+	CHECK(adjustedFrame == 0);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "before");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(9999);
+	CHECK(adjustedFrame == 9999);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "before");
+
+	// Ramp up
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10000);
+	CHECK(adjustedFrame == 10000);
+	CHECK(multiplier == 1.0);
+	CHECK(text == "ramp up");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10119);
+	CHECK(adjustedFrame == 10298);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "ramp up");
+
+	// Full speed
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(10120);
+	CHECK(adjustedFrame == 10302);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "full speed");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(29954);
+	CHECK(adjustedFrame == 89638);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "full speed");
+
+	// Ramp down
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(29955);
+	CHECK(adjustedFrame == 89642);
+	CHECK(multiplier == 4.0);
+	CHECK(text == "ramp down");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(30074);
+	CHECK(adjustedFrame == 90000);
+	CHECK(multiplier == 2.0);
+	CHECK(text == "ramp down");
+
+	// After
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(30075);
+	CHECK(adjustedFrame == 90002);
+	CHECK(multiplier == 2.0);
+	CHECK(text == "after");
+
+	std::tie(adjustedFrame, multiplier, text) = c.GetAdjustedFrameProperties(35073);
+	CHECK(adjustedFrame == 99998);
+	CHECK(multiplier == 2.0);
 	CHECK(text == "after");
 }

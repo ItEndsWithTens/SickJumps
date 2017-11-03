@@ -32,10 +32,12 @@ AVSValue __cdecl Create_SickJumps(AVSValue args, void* user_data, IScriptEnviron
 
 	std::string scriptVariable = args[7].AsString("");
 
+	SFLOAT endMultiplier = static_cast<SFLOAT>(args[8].AsFloat(startMultiplier));
+
 	SickJumps* s;
 	try
 	{
-		s = new SickJumps(clip, firstFrame, lastFrame, startMultiplier, fullMultiplier, upSeconds, downSeconds, scriptVariable, env);
+		s = new SickJumps(clip, firstFrame, lastFrame, startMultiplier, fullMultiplier, endMultiplier, upSeconds, downSeconds, scriptVariable, env);
 	}
 	catch (std::invalid_argument& e)
 	{
@@ -53,7 +55,7 @@ extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit3(IScri
 
 	AVS_linkage = vectors;
 
-	env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[up_seconds]f[down_seconds]f[script_variable]s", Create_SickJumps, 0);
+	env->AddFunction("SickJumps", "c[first_frame]i[last_frame]i[start_multiplier]f[full_multiplier]f[up_seconds]f[down_seconds]f[script_variable]s[end_multiplier]f", Create_SickJumps, 0);
 
 	return "`SickJumps' - Speed ramping effect";
 

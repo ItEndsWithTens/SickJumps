@@ -17,21 +17,12 @@ class SickJumps : public GenericVideoFilter
 {
 public:
 	SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _startMultiplier, SFLOAT _fullMultiplier,
-		SFLOAT _inSeconds, SFLOAT _outSeconds, std::string _scriptVariable, IScriptEnvironment* env);
+		SFLOAT _endMultiplier, SFLOAT _inSeconds, SFLOAT _outSeconds, std::string _scriptVariable, IScriptEnvironment* env);
 	~SickJumps();
 
 	void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
 	PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
 	int __stdcall SetCacheHints(int cachehints, int frame_range);
-
-	int firstFrame;
-	int lastFrame;
-
-	SFLOAT startMultiplier;
-	SFLOAT fullMultiplier;
-
-	SFLOAT upSeconds;
-	SFLOAT downSeconds;
 
 	std::string scriptVariable;
 

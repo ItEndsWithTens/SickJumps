@@ -4,7 +4,7 @@
 
 TEST_CASE("Ramps start and end on proper input samples with a full multiplier of 1.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 800);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 1.0, 1.0, 800);
 
 	CHECK(c.rampUpFirstInputSample == 8000000);
 	CHECK(c.rampUpLastInputSample == 8095999);
@@ -24,7 +24,7 @@ TEST_CASE("Ramps start and end on proper input samples with a full multiplier of
 
 TEST_CASE("Ramps start and end on proper input samples with a full multiplier of 8.0")
 {
-	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 800);
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 8.0, 1.0, 800);
 
 	CHECK(c.rampUpFirstInputSample == 8000000);
 	CHECK(c.rampUpLastInputSample == 8431996);
@@ -40,4 +40,44 @@ TEST_CASE("Ramps start and end on proper input samples with a full multiplier of
 	CHECK(c.fullSpeedLastOutputSample == 15988099);
 	CHECK(c.rampDownFirstOutputSample == 15988100);
 	CHECK(c.rampDownLastOutputSample == 16084099);
+}
+
+TEST_CASE("Ramps start and end on proper input samples with a full multiplier of 4.0 "
+					"and an end multiplier of 2.0")
+{
+	SickJumpsCore c = SickJumpsCore(100000, 10000, 90000, 60.0, 2.0, 2.0, 1.0, 4.0, 2.0, 800);
+
+	CHECK(c.rampUpFirstInputSample == 8000000);
+	CHECK(c.rampUpLastInputSample == 8239998);
+	CHECK(c.fullSpeedFirstInputSample == 8240002);
+	CHECK(c.fullSpeedLastInputSample == 71712798);
+	CHECK(c.rampDownFirstInputSample == 71712802);
+	CHECK(c.rampDownLastInputSample == 72000799);
+	CHECK(c.afterFirstInputSample == 72000801);
+
+	CHECK(c.rampUpFirstOutputSample == 8000000);
+	CHECK(c.rampUpLastOutputSample == 8095999);
+	CHECK(c.fullSpeedFirstOutputSample == 8096000);
+	CHECK(c.fullSpeedLastOutputSample == 23964199);
+	CHECK(c.rampDownFirstOutputSample == 23964200);
+	CHECK(c.rampDownLastOutputSample == 24060199);
+
+	// Before
+	CHECK(c.GetAdjustedSampleNumber(0) == 0);
+	CHECK(c.GetAdjustedSampleNumber(7999999) == 7999999);
+
+	// Ramp up
+	CHECK(c.GetAdjustedSampleNumber(8000000) == 8000000);
+	CHECK(c.GetAdjustedSampleNumber(8095999) == 8239998);
+
+	// Full speed
+	CHECK(c.GetAdjustedSampleNumber(8096000) == 8240002);
+	CHECK(c.GetAdjustedSampleNumber(23964199) == 71712798);
+
+	// Ramp down
+	CHECK(c.GetAdjustedSampleNumber(23964200) == 71712802);
+	CHECK(c.GetAdjustedSampleNumber(24060199) == 72000799);
+
+	// After
+	CHECK(c.GetAdjustedSampleNumber(24060200) == 72000801);
 }

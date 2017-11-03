@@ -13,14 +13,12 @@
 
 
 SickJumps::SickJumps(PClip _child, int _firstFrame, int _lastFrame, SFLOAT _startMultiplier, SFLOAT _fullMultiplier,
-	SFLOAT _upSeconds, SFLOAT _downSeconds, std::string _scriptVariable, IScriptEnvironment * env)
+	SFLOAT _endMultiplier, SFLOAT _upSeconds, SFLOAT _downSeconds, std::string _scriptVariable, IScriptEnvironment * env)
 	:
-	GenericVideoFilter(_child), startMultiplier(_startMultiplier), fullMultiplier(_fullMultiplier),
-	upSeconds(_upSeconds), downSeconds(_downSeconds), scriptVariable(_scriptVariable),
-	setScriptVariable(_scriptVariable != "" ? true : false)
+	GenericVideoFilter(_child), scriptVariable(_scriptVariable), setScriptVariable(_scriptVariable != "" ? true : false)
 {
 	core = SickJumpsCore(vi.num_frames, _firstFrame, _lastFrame, vi.fps_numerator / vi.fps_denominator,
-		_upSeconds, _downSeconds, _startMultiplier, _fullMultiplier, vi.AudioSamplesFromFrames(1));
+		_upSeconds, _downSeconds, _startMultiplier, _fullMultiplier, _endMultiplier, vi.AudioSamplesFromFrames(1));
 
 	vi.num_frames = core.adjustedFrameCount;
 	vi.num_audio_samples = core.adjustedSampleCount;
@@ -53,7 +51,7 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 
 		__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
 
-		child->GetAudio(sample.data(), static_cast<__int64>(adjustedSample), 1, env);
+		child->GetAudio(sample.data(), adjustedSample, 1, env);
 
 		for (size_t k = 0; k < sample.size(); ++k)
 		{
