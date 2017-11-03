@@ -2,7 +2,7 @@
   --SickJumps 0.1.0--
 
       A speed ramping plugin for Avisynth.
-      
+
       Requirements:
         Avisynth 2.6 or greater, or Avisynth+
         Microsoft's Visual C++ 2015 Redistributable
@@ -32,11 +32,11 @@
 
     start_multiplier  float, default 1.0
 
-      The speed multiplier to use outside of the ramped portion of c.
+      The speed multiplier to use before the ramp up.
 
     full_multiplier  float, default 1.0
 
-      The speed multiplier to use as the target within the ramped portion of c.
+      The speed multiplier to use between ramp up and ramp down.
 
     up_seconds  float, default c length / 4.0
     down_seconds  float, default c length / 4.0
@@ -60,3 +60,7 @@
 
       See the source distribution for an example script that demonstrates one
       approach to parsing the string and using some of its information.
+
+    end_multiplier  float, default start_multiplier
+
+      The speed multiplier to use after the ramp down.
