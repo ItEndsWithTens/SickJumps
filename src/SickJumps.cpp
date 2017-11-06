@@ -88,30 +88,6 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 
 		std::memcpy(buf, outputChunk.data(), bytes);
 	}
-	else if (vi.sample_type == SAMPLE_INT24)
-	{
-		std::vector<uint8_t> outputChunk;
-
-		for (size_t i = 0; i < size; ++i)
-		{
-			std::vector<uint8_t> sample;
-			for (int j = 0; j < vi.BytesPerAudioSample(); ++j)
-			{
-				sample.push_back(0);
-			}
-
-			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
-
-			child->GetAudio(sample.data(), adjustedSample, 1, env);
-
-			for (size_t k = 0; k < sample.size(); ++k)
-			{
-				outputChunk.push_back(sample[k]);
-			}
-		}
-
-		std::memcpy(buf, outputChunk.data(), bytes);
-	}
 	else if (vi.sample_type == SAMPLE_INT16)
 	{
 		std::vector<int16_t> outputChunk;
@@ -136,14 +112,14 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 
 		std::memcpy(buf, outputChunk.data(), bytes);
 	}
-	else // 8 bit integer
+	else // 24 and 8 bit integer
 	{
 		std::vector<uint8_t> outputChunk;
 
 		for (size_t i = 0; i < size; ++i)
 		{
 			std::vector<uint8_t> sample;
-			for (int j = 0; j < vi.AudioChannels(); ++j)
+			for (int j = 0; j < vi.BytesPerAudioSample(); ++j)
 			{
 				sample.push_back(0);
 			}
