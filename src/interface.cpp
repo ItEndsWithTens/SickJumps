@@ -13,11 +13,6 @@ AVSValue __cdecl Create_SickJumps(AVSValue args, void* user_data, IScriptEnviron
 
 	VideoInfo vi = clip->GetVideoInfo();
 
-	if (!vi.IsSampleType(SAMPLE_FLOAT))
-	{
-		env->ThrowError("SickJumps: Input audio type must be float!");
-	}
-
 	int firstFrame = args[1].AsInt(0);
 	int lastFrame = args[2].AsInt(vi.num_frames - 1);
 

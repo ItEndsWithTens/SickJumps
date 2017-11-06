@@ -38,29 +38,128 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 	// count is provided as an __int64, buf could never be indexed with values
 	// larger than an unsigned int on x86 systems.
 	size_t size = static_cast<size_t>(count);
-
-	std::vector<SFLOAT> outputChunk;
-
-	for (size_t i = 0; i < size; ++i)
-	{
-		std::vector<SFLOAT> sample;
-		for (int j = 0; j < vi.AudioChannels(); ++j)
-		{
-			sample.push_back(1.0f);
-		}
-
-		__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
-
-		child->GetAudio(sample.data(), adjustedSample, 1, env);
-
-		for (size_t k = 0; k < sample.size(); ++k)
-		{
-			outputChunk.push_back(sample[k]);
-		}
-	}
-
 	size_t bytes = vi.BytesPerAudioSample() * size;
-	std::memcpy(reinterpret_cast<SFLOAT*>(buf), outputChunk.data(), bytes);
+
+	if (vi.sample_type == SAMPLE_FLOAT)
+	{
+		std::vector<SFLOAT> outputChunk;
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			std::vector<SFLOAT> sample;
+			for (int j = 0; j < vi.AudioChannels(); ++j)
+			{
+				sample.push_back(0.0f);
+			}
+
+			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
+
+			child->GetAudio(sample.data(), adjustedSample, 1, env);
+
+			for (size_t k = 0; k < sample.size(); ++k)
+			{
+				outputChunk.push_back(sample[k]);
+			}
+		}
+
+		std::memcpy(buf, outputChunk.data(), bytes);
+	}
+	else if (vi.sample_type == SAMPLE_INT32)
+	{
+		std::vector<int32_t> outputChunk;
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			std::vector<int32_t> sample;
+			for (int j = 0; j < vi.AudioChannels(); ++j)
+			{
+				sample.push_back(0);
+			}
+
+			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
+
+			child->GetAudio(sample.data(), adjustedSample, 1, env);
+
+			for (size_t k = 0; k < sample.size(); ++k)
+			{
+				outputChunk.push_back(sample[k]);
+			}
+		}
+
+		std::memcpy(buf, outputChunk.data(), bytes);
+	}
+	else if (vi.sample_type == SAMPLE_INT24)
+	{
+		std::vector<uint8_t> outputChunk;
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			std::vector<uint8_t> sample;
+			for (int j = 0; j < vi.BytesPerAudioSample(); ++j)
+			{
+				sample.push_back(0);
+			}
+
+			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
+
+			child->GetAudio(sample.data(), adjustedSample, 1, env);
+
+			for (size_t k = 0; k < sample.size(); ++k)
+			{
+				outputChunk.push_back(sample[k]);
+			}
+		}
+
+		std::memcpy(buf, outputChunk.data(), bytes);
+	}
+	else if (vi.sample_type == SAMPLE_INT16)
+	{
+		std::vector<int16_t> outputChunk;
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			std::vector<int16_t> sample;
+			for (int j = 0; j < vi.AudioChannels(); ++j)
+			{
+				sample.push_back(0);
+			}
+
+			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
+
+			child->GetAudio(sample.data(), adjustedSample, 1, env);
+
+			for (size_t k = 0; k < sample.size(); ++k)
+			{
+				outputChunk.push_back(sample[k]);
+			}
+		}
+
+		std::memcpy(buf, outputChunk.data(), bytes);
+	}
+	else // 8 bit integer
+	{
+		std::vector<uint8_t> outputChunk;
+
+		for (size_t i = 0; i < size; ++i)
+		{
+			std::vector<uint8_t> sample;
+			for (int j = 0; j < vi.AudioChannels(); ++j)
+			{
+				sample.push_back(0);
+			}
+
+			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
+
+			child->GetAudio(sample.data(), adjustedSample, 1, env);
+
+			for (size_t k = 0; k < sample.size(); ++k)
+			{
+				outputChunk.push_back(sample[k]);
+			}
+		}
+
+		std::memcpy(buf, outputChunk.data(), bytes);
+	}
 }
 
 
