@@ -12,7 +12,6 @@ extern IScriptEnvironment* env;
 
 
 
-int32_t FromTwos(uint8_t* buf);
 int32_t Get24bitInt(uint8_t* buf);
 
 
@@ -575,22 +574,6 @@ TEST_CASE("GetAudio retrieves expected samples regardless of sample type", "[avi
 			CHECK(buf[1] - 128 == 0);
 		}
 	}
-}
-
-int32_t FromTwos(uint8_t* buf)
-{
-	int32_t decimal;
-
-	if (buf[2] & (1 << 23))
-	{
-		decimal = static_cast<int32_t>(~((buf[2] << 16) | (buf[1] << 8) | buf[0]) + 1);
-	}
-	else
-	{
-		decimal = static_cast<int32_t>((buf[2] << 16) | (buf[1] << 8) | buf[0]);
-	}
-
-	return decimal;
 }
 
 int32_t Get24bitInt(uint8_t* buf)
