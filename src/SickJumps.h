@@ -27,6 +27,9 @@ public:
 	std::string scriptVariable;
 
 private:
+	template<typename T>
+	void FillAudioBuffer(void* buf, __int64 start, __int64 count, IScriptEnvironment* env);
+
 	bool setScriptVariable;
 
 	SickJumpsCore core;

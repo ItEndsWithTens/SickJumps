@@ -32,7 +32,8 @@ SickJumps::~SickJumps()
 
 
 
-void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env)
+template<typename T>
+void SickJumps::FillAudioBuffer(void* buf, __int64 start, __int64 count, IScriptEnvironment* env)
 {
 	// C++ arrays' [] operator takes a size_t argument, which means that although
 	// count is provided as an __int64, buf could never be indexed with values
@@ -40,101 +41,58 @@ void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScr
 	size_t size = static_cast<size_t>(count);
 	size_t bytes = vi.BytesPerAudioSample() * size;
 
-	if (vi.sample_type == SAMPLE_FLOAT)
+	int sampleSize;
+	if (vi.sample_type == SAMPLE_INT24)
 	{
-		std::vector<SFLOAT> outputChunk;
+		sampleSize = vi.BytesPerAudioSample();
+	}
+	else
+	{
+		sampleSize = vi.AudioChannels();
+	}
 
-		for (size_t i = 0; i < size; ++i)
+	std::vector<T> outputChunk;
+
+	for (size_t i = 0; i < size; ++i)
+	{
+		std::vector<T> sample;
+		for (int j = 0; j < sampleSize; ++j)
 		{
-			std::vector<SFLOAT> sample;
-			for (int j = 0; j < vi.AudioChannels(); ++j)
-			{
-				sample.push_back(0.0f);
-			}
-
-			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
-
-			child->GetAudio(sample.data(), adjustedSample, 1, env);
-
-			for (size_t k = 0; k < sample.size(); ++k)
-			{
-				outputChunk.push_back(sample[k]);
-			}
+			sample.push_back(0);
 		}
 
-		std::memcpy(buf, outputChunk.data(), bytes);
+		__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
+
+		child->GetAudio(sample.data(), adjustedSample, 1, env);
+
+		for (size_t k = 0; k < sample.size(); ++k)
+		{
+			outputChunk.push_back(sample[k]);
+		}
+	}
+
+	std::memcpy(buf, outputChunk.data(), bytes);
+}
+
+
+
+void __stdcall SickJumps::GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env)
+{
+	if (vi.sample_type == SAMPLE_FLOAT)
+	{
+		FillAudioBuffer<SFLOAT>(buf, start, count, env);
 	}
 	else if (vi.sample_type == SAMPLE_INT32)
 	{
-		std::vector<int32_t> outputChunk;
-
-		for (size_t i = 0; i < size; ++i)
-		{
-			std::vector<int32_t> sample;
-			for (int j = 0; j < vi.AudioChannels(); ++j)
-			{
-				sample.push_back(0);
-			}
-
-			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
-
-			child->GetAudio(sample.data(), adjustedSample, 1, env);
-
-			for (size_t k = 0; k < sample.size(); ++k)
-			{
-				outputChunk.push_back(sample[k]);
-			}
-		}
-
-		std::memcpy(buf, outputChunk.data(), bytes);
+		FillAudioBuffer<int32_t>(buf, start, count, env);
 	}
 	else if (vi.sample_type == SAMPLE_INT16)
 	{
-		std::vector<int16_t> outputChunk;
-
-		for (size_t i = 0; i < size; ++i)
-		{
-			std::vector<int16_t> sample;
-			for (int j = 0; j < vi.AudioChannels(); ++j)
-			{
-				sample.push_back(0);
-			}
-
-			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
-
-			child->GetAudio(sample.data(), adjustedSample, 1, env);
-
-			for (size_t k = 0; k < sample.size(); ++k)
-			{
-				outputChunk.push_back(sample[k]);
-			}
-		}
-
-		std::memcpy(buf, outputChunk.data(), bytes);
+		FillAudioBuffer<int16_t>(buf, start, count, env);
 	}
-	else // 24 and 8 bit integer
+	else
 	{
-		std::vector<uint8_t> outputChunk;
-
-		for (size_t i = 0; i < size; ++i)
-		{
-			std::vector<uint8_t> sample;
-			for (int j = 0; j < vi.BytesPerAudioSample(); ++j)
-			{
-				sample.push_back(0);
-			}
-
-			__int64 adjustedSample = core.GetAdjustedSampleNumber(start + i);
-
-			child->GetAudio(sample.data(), adjustedSample, 1, env);
-
-			for (size_t k = 0; k < sample.size(); ++k)
-			{
-				outputChunk.push_back(sample[k]);
-			}
-		}
-
-		std::memcpy(buf, outputChunk.data(), bytes);
+		FillAudioBuffer<int8_t>(buf, start, count, env);
 	}
 }
 
