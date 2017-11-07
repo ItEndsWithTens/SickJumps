@@ -39,8 +39,16 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	// Establish preliminary locations.
 	rampUpFirstInputFrame = _firstFrame;
 	rampUpLastInputFrame = (rampUpFirstInputFrame + rampUpInputFrames) - 1;
+	if (rampUpLastInputFrame <= 0)
+	{
+		rampUpLastInputFrame = 0;
+	}
 	rampDownLastInputFrame = _lastFrame;
 	rampDownFirstInputFrame = (rampDownLastInputFrame - rampDownInputFrames) + 1;
+	if (rampDownFirstInputFrame >= _frameCount - 1)
+	{
+		rampDownFirstInputFrame = _frameCount - 1;
+	}
 	fullSpeedFirstInputFrame = rampUpLastInputFrame + static_cast<int>(std::round(fullMultiplier));
 	fullSpeedLastInputFrame = rampDownFirstInputFrame - static_cast<int>(std::round(fullMultiplier));
 	afterFirstInputFrame = rampDownLastInputFrame + static_cast<int>(std::round(endMultiplier));
