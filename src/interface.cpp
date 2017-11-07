@@ -17,7 +17,7 @@ AVSValue __cdecl Create_SickJumps(AVSValue args, void* user_data, IScriptEnviron
 	int lastFrame = args[2].AsInt(vi.num_frames - 1);
 
 	SFLOAT startMultiplier = static_cast<SFLOAT>(args[3].AsFloat(1.0f));
-	SFLOAT fullMultiplier = static_cast<SFLOAT>(args[4].AsFloat(1.0f));
+	SFLOAT fullMultiplier = static_cast<SFLOAT>(args[4].AsFloat(2.0f));
 
 	double fps = vi.fps_numerator / vi.fps_denominator;
 	double seconds = vi.num_frames / fps;

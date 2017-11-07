@@ -34,7 +34,7 @@
 
       The speed multiplier to use before the ramp up.
 
-    full_multiplier  float, default 1.0
+    full_multiplier  float, default 2.0
 
       The speed multiplier to use between ramp up and ramp down.
 
