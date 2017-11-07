@@ -16,11 +16,11 @@
     SickJumps(clip c, int "first_frame", int "last_frame",
               float "start_multiplier", float full_multiplier",
               float "up_seconds", float "down_seconds",
-              string "script_variable")
+              string "script_variable", float "end_multiplier")
 
     c  clip
 
-      The input clip; must have floating point audio (use ConvertAudioToFloat).
+      The input clip. Can be any colorspace and audio format.
 
     first_frame  int, default 0
 
@@ -28,7 +28,7 @@
 
     last_frame  int, default c frame count - 1
 
-      The last frame of the ramp back down to the starting speed.
+      The last frame of the ramp down to the ending speed.
 
     start_multiplier  float, default 1.0
 
