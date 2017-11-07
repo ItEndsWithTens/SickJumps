@@ -259,7 +259,7 @@ install(
 
 install(
   FILES
-  README.txt
+  README.md
   DESTINATION .
   RENAME ${PROJECT_NAME}.txt
 )
