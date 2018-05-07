@@ -64,7 +64,6 @@ SickJumpsCore::SickJumpsCore(int _frameCount, int _firstFrame, int _lastFrame, d
 	// down ramp remains the same. To fit the new input frame count into the same
 	// output frame count, the down ramp needs its own multiplier tweaked as well.
 	int downDistanceOutput = rampDownOutputFrames - 1;
-	int calculatedDownDistanceInput = static_cast<int>(std::round(downDistanceOutput * downAverageVideoMultiplier));
 	double originalDownAverageMultiplier = downAverageVideoMultiplier;
 	int expectedDownDistanceInputFrames = rampDownLastInputFrame - rampDownFirstInputFrame;
 	downAverageVideoMultiplier = static_cast<double>(expectedDownDistanceInputFrames) / static_cast<double>(downDistanceOutput);

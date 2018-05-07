@@ -15,12 +15,12 @@
         {
             VALUE "CompanyName", "${SICKJUMPS_AUTHOR} ${SICKJUMPS_AUTHOR_EMAIL}"
             VALUE "FileDescription", "${SICKJUMPS_DESCRIPTION}"
-            VALUE "FileVersion", "${SICKJUMPS_VERSION}.0"
+            VALUE "FileVersion", "${SICKJUMPS_VERSION}"
             VALUE "InternalName", "${PROJECT_NAME}"
             VALUE "LegalCopyright", "2017 ${SICKJUMPS_AUTHOR}"
             VALUE "OriginalFilename", "${PROJECT_NAME}.dll"
             VALUE "ProductName", "${PROJECT_NAME}"
-            VALUE "ProductVersion", "${SICKJUMPS_VERSION}.0"
+            VALUE "ProductVersion", "${SICKJUMPS_VERSION}"
         }
     }
     BLOCK "VarFileInfo"

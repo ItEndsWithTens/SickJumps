@@ -108,7 +108,6 @@ TEST_CASE("Ramps start and end on proper input frames with a full multiplier of 
 	CHECK(c.fullSpeedFirstOutputFrame == 10120);
 	CHECK(c.fullSpeedLastOutputFrame == 29969);
 	CHECK(c.rampDownFirstOutputFrame == 29970);
-	//CHECK(c.rampDownLastOutputFrame == );
 
 	CHECK(c.rampUpFirstInputFrame == 10000);
 	CHECK(c.rampUpLastInputFrame == 10298);

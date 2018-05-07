@@ -1,5 +1,5 @@
 
-  SickJumps 0.1.0
+  SickJumps 0.1.1
   ===============
 
   A speed ramping plugin for [Avisynth](http://www.avisynth.nl).
@@ -14,7 +14,7 @@
   ### Usage ###
 
     SickJumps(clip c, int "first_frame", int "last_frame",
-              float "start_multiplier", float full_multiplier",
+              float "start_multiplier", float "full_multiplier",
               float "up_seconds", float "down_seconds",
               string "script_variable", float "end_multiplier")
 
